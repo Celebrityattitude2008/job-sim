@@ -1,3 +1,23 @@
+// ============ AUTHENTICATION CHECK ============
+function checkAuthentication() {
+    const userId = localStorage.getItem('userId');
+    const userEmail = localStorage.getItem('userEmail');
+    
+    // If user is not logged in, redirect to login page
+    if (!userId || !userEmail) {
+        window.location.href = 'login.html';
+        return false;
+    }
+    
+    return true;
+}
+
+// Check authentication before proceeding
+if (!checkAuthentication()) {
+    // Stop execution - user will be redirected
+    throw new Error('User not authenticated');
+}
+
 // ============ GAME STATE ============
 let gameState = {
     day: 1,
@@ -10,6 +30,9 @@ let gameState = {
     oldMoney: 150000,
     oldStress: 30,
     oldBusinessGrowth: 20,
+    userId: localStorage.getItem('userId'),
+    firstName: localStorage.getItem('firstName'),
+    fieldOfStudy: localStorage.getItem('fieldOfStudy'),
 };
 
 // ============ SCENARIOS DATA ============
@@ -781,16 +804,34 @@ function render() {
 function renderHeader() {
     const headerHTML = `
         <div class="header-content">
-            <h1>📱 JobSim Abuja</h1>
+            <div class="header-left">
+                <h1>📱 JobSim Abuja</h1>
+                <div class="user-info">Welcome, ${gameState.firstName || 'Player'}! (${gameState.fieldOfStudy || 'Field Unknown'})</div>
+            </div>
             <div class="header-stats">
                 Day <span>${gameState.day}/30</span> • 
                 Money ₦<span>${gameState.money.toLocaleString()}</span> • 
                 Stress <span>${gameState.stress}</span> • 
                 Growth <span>${gameState.businessGrowth}</span>
             </div>
+            <button class="logout-btn" onclick="logoutUser()">Logout</button>
         </div>
     `;
     document.querySelector('.header').innerHTML = headerHTML;
+}
+
+// ============ AUTHENTICATION FUNCTIONS ============
+function logoutUser() {
+    if (confirm('Are you sure you want to logout?')) {
+        // Clear all user data from localStorage
+        localStorage.removeItem('userId');
+        localStorage.removeItem('userEmail');
+        localStorage.removeItem('firstName');
+        localStorage.removeItem('fieldOfStudy');
+        
+        // Redirect to login page
+        window.location.href = 'login.html';
+    }
 }
 
 function renderStatBars() {
