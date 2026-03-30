@@ -715,9 +715,11 @@ function continueToDayPlay() {
 }
 
 function closeGameplay() {
-    getRandomScenario();
-    gameState.phase = 'playing';
-    render();
+    // Fetch next scenario from backend
+    fetchRandomScenario().then(() => {
+        gameState.phase = 'playing';
+        render();
+    });
 }
 
 function restartGame() {
