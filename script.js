@@ -124,11 +124,39 @@ function initializeAutosave() {
 }
 
 function saveGameProgress() {
+    // 1. Keep the local save (good for backup)
     localStorage.setItem('money', gameState.money);
     localStorage.setItem('stress', gameState.stress);
     localStorage.setItem('growth', gameState.businessGrowth);
     localStorage.setItem('currentDay', gameState.day);
-    console.log('Game auto-saved');
+
+    // 2. SEND TO SERVER (This updates the leaderboard)
+    const username = localStorage.getItem('username') || gameState.firstName || 'Player';
+
+    fetch('https://jobsim.pythonanywhere.com/update-stats', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            username: username,
+            money: gameState.money,
+            growth: gameState.businessGrowth,
+            stress: gameState.stress,
+            days: gameState.day
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log('Game synced to leaderboard!');
+        } else {
+            console.error('Leaderboard sync failed:', data.error);
+        }
+    })
+    .catch(err => console.error('Network error updating leaderboard:', err));
+
+    console.log('Game auto-saved locally');
 }
 
 // ============ LOAD SAVED PROGRESS ============

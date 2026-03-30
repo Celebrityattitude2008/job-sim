@@ -263,6 +263,7 @@ async function handleSignup() {
         }
 
         // Save to localStorage
+        localStorage.setItem('username', name);  // Full name for leaderboard sync
         localStorage.setItem('firstName', name.split(' ')[0]);
         localStorage.setItem('fieldOfStudy', field);
         localStorage.setItem('userId', data.user_id);
@@ -346,8 +347,9 @@ async function handleLogin() {
 
         // Save to localStorage
         localStorage.setItem('userId', data.user_id);
+        localStorage.setItem('username', data.username);  // Full username for leaderboard sync
         localStorage.setItem('userEmail', email);
-        localStorage.setItem('firstName', data.name ? data.name.split(' ')[0] : 'Player');
+        localStorage.setItem('firstName', data.username ? data.username.split(' ')[0] : 'Player');
         if (data.field) {
             localStorage.setItem('fieldOfStudy', data.field);
         }
