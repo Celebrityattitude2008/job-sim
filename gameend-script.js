@@ -237,7 +237,20 @@ async function completeGame(userId, finalMoney, finalStress, finalGrowth) {
 
         if (!response.ok) {
             console.warn('Could not mark game as complete');
+            return;
         }
+
+        const data = await response.json();
+        
+        // Store achievements and stats from response
+        if (data.achievements_unlocked) {
+            const newAchievements = data.achievements_unlocked.filter(a => !localStorage.getItem(`achievement_${a.achievement_name}`));
+            newAchievements.forEach(ach => {
+                localStorage.setItem(`achievement_${ach.achievement_name}`, 'true');
+            });
+        }
+        
+        console.log('Game completed and achievements unlocked!');
     } catch (error) {
         console.error('Error completing game:', error);
     }

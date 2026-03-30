@@ -9,9 +9,6 @@
     <link rel="stylesheet" href="achievements-style.css">
 </head>
 <body>
-    <!-- Floating Icons Background -->
-    <div class="floating-icons-container" id="floating-icons-container"></div>
-
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
@@ -100,26 +97,5 @@
     </div>
 
     <script src="achievements-script.js"></script>
-    <script>
-        // Generate floating icons
-        function createFloatingIcons() {
-            const container = document.getElementById('floating-icons-container');
-            const icons = ['📱', '💼', '📊', '🎯', '⚡', '🏆', '💡', '🚀', '📈', '✨', '🎓', '🔥'];
-            const iconCount = 10;
-
-            for (let i = 0; i < iconCount; i++) {
-                const icon = document.createElement('div');
-                icon.className = 'floating-icon';
-                icon.textContent = icons[Math.floor(Math.random() * icons.length)];
-                icon.style.left = Math.random() * 100 + '%';
-                icon.style.top = Math.random() * 100 + '%';
-                icon.style.animationDuration = (Math.random() * 10 + 15) + 's';
-                icon.style.animationDelay = Math.random() * 5 + 's';
-                container.appendChild(icon);
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', createFloatingIcons);
-    </script>
 </body>
 </html>

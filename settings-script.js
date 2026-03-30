@@ -62,7 +62,6 @@ async function loadSettings() {
         document.getElementById('soundToggle').checked = settings.sound_enabled !== false;
         document.getElementById('notificationsToggle').checked = settings.notifications_enabled !== false;
         document.getElementById('themeSelect').value = settings.theme || 'dark';
-        document.getElementById('languageSelect').value = settings.language || 'en';
         document.getElementById('difficultySelect').value = settings.difficulty || 'normal';
         document.getElementById('autosaveSelect').value = settings.autosave || 'on';
         
@@ -84,12 +83,10 @@ function loadLocalSettings() {
     const theme = localStorage.getItem('theme') || 'dark';
     const difficulty = localStorage.getItem('gameDifficulty') || 'normal';
     const autosave = localStorage.getItem('autosave') || 'on';
-    const language = localStorage.getItem('language') || 'en';
     
     document.getElementById('soundToggle').checked = soundEnabled;
     document.getElementById('notificationsToggle').checked = localStorage.getItem('notificationsEnabled') !== 'false';
     document.getElementById('themeSelect').value = theme;
-    document.getElementById('languageSelect').value = language;
     document.getElementById('difficultySelect').value = difficulty;
     document.getElementById('autosaveSelect').value = autosave;
 }
@@ -140,7 +137,6 @@ async function saveSettings(userId) {
             sound_enabled: document.getElementById('soundToggle').checked ? 1 : 0,
             notifications_enabled: document.getElementById('notificationsToggle').checked ? 1 : 0,
             theme: document.getElementById('themeSelect').value,
-            language: document.getElementById('languageSelect').value,
             difficulty: document.getElementById('difficultySelect').value
         };
 
