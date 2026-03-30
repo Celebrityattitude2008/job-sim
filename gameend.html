@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Complete - JobSim</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="global-style.css">
+    <link rel="stylesheet" href="gameend-style.css">
+</head>
+<body>
+    <!-- Floating Icons Background -->
+    <div class="floating-icons-container" id="floating-icons-container"></div>
+
+    <div class="gameend-container">
+        <!-- Celebration Animation -->
+        <div class="celebration" id="celebration">
+            <div class="confetti"></div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="gameend-content">
+            <!-- Header -->
+            <div class="gameend-header">
+                <h1 class="gameend-title">🎉 30 Days Complete!</h1>
+                <p class="gameend-subtitle">Your journey in the Nigerian job market ends here...</p>
+            </div>
+
+            <!-- Player Info -->
+            <div class="player-summary">
+                <div class="player-avatar" id="playerAvatar"></div>
+                <div class="player-info">
+                    <h2 id="playerName">Player Name</h2>
+                    <p id="playerField">Field of Study</p>
+                </div>
+            </div>
+
+            <!-- Final Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card money-card">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-label">Final Money</div>
+                    <div class="stat-value" id="finalMoney">₦0</div>
+                    <div class="stat-change" id="moneyChange">+₦0</div>
+                </div>
+
+                <div class="stat-card stress-card">
+                    <div class="stat-icon">😰</div>
+                    <div class="stat-label">Final Stress</div>
+                    <div class="stat-value" id="finalStress">0%</div>
+                    <div class="stat-change" id="stressChange">+0%</div>
+                </div>
+
+                <div class="stat-card growth-card">
+                    <div class="stat-icon">📈</div>
+                    <div class="stat-label">Final Growth</div>
+                    <div class="stat-value" id="finalGrowth">0</div>
+                    <div class="stat-change" id="growthChange">+0</div>
+                </div>
+            </div>
+
+            <!-- Performance Rating -->
+            <div class="performance-rating">
+                <h3>Your Performance</h3>
+                <div class="rating-bar">
+                    <div class="rating-fill" id="ratingFill"></div>
+                </div>
+                <p class="rating-text" id="ratingText">Great effort! Keep pushing forward.</p>
+                <p class="rank-badge" id="rankBadge">🏅 Rank: Hustler</p>
+            </div>
+
+            <!-- Achievements Unlocked -->
+            <div class="achievements-section">
+                <h3>🏆 Achievements Unlocked</h3>
+                <div class="achievements-list" id="achievementsList">
+                    <div class="achievement-item">
+                        <span class="achievement-icon">🎯</span>
+                        <span class="achievement-name">Loading...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Game Tips -->
+            <div class="tips-section">
+                <h3>💡 What You Learned</h3>
+                <div id="gameTips" class="tips-list">
+                    <div class="tip-item">
+                        <span class="tip-number">1</span>
+                        <p>Budget management is crucial in the Nigerian economy</p>
+                    </div>
+                    <div class="tip-item">
+                        <span class="tip-number">2</span>
+                        <p>Stress management helps you make better decisions</p>
+                    </div>
+                    <div class="tip-item">
+                        <span class="tip-number">3</span>
+                        <p>Growth comes from consistent smart choices</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="gameend-actions">
+                <button class="btn btn-primary" id="playAgainBtn">Play Again</button>
+                <button class="btn btn-secondary" id="profileBtn">View Profile</button>
+                <button class="btn btn-tertiary" id="leaderboardBtn">See Leaderboard</button>
+            </div>
+
+            <!-- Return to Home -->
+            <div class="gameend-footer">
+                <a href="login.html" class="logout-link">← Back to Home</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="gameend-script.js"></script>
+    <script>
+        // Generate floating icons
+        function createFloatingIcons() {
+            const container = document.getElementById('floating-icons-container');
+            const icons = ['📱', '💼', '📊', '🎯', '⚡', '🏆', '💡', '🚀', '📈', '✨', '🎓', '🔥'];
+            const iconCount = 10;
+
+            for (let i = 0; i < iconCount; i++) {
+                const icon = document.createElement('div');
+                icon.className = 'floating-icon';
+                icon.textContent = icons[Math.floor(Math.random() * icons.length)];
+                icon.style.left = Math.random() * 100 + '%';
+                icon.style.top = Math.random() * 100 + '%';
+                icon.style.animationDuration = (Math.random() * 10 + 15) + 's';
+                icon.style.animationDelay = Math.random() * 5 + 's';
+                container.appendChild(icon);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', createFloatingIcons);
+    </script>
+</body>
+</html>

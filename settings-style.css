@@ -1,0 +1,232 @@
+/* ============ SETTINGS PAGE STYLES ============ */
+
+.navbar {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 15px 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.nav-logo {
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1em;
+    transition: opacity 0.3s ease;
+}
+
+.nav-logo:hover {
+    opacity: 0.8;
+}
+
+.nav-title {
+    color: white;
+    margin: 0;
+    flex: 1;
+    text-align: center;
+    font-size: 1.5em;
+}
+
+.nav-logout {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.nav-logout:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.settings-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+/* Settings Section */
+.settings-section {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.settings-section h2 {
+    margin: 0 0 25px 0;
+    font-size: 1.4em;
+    color: #333;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 10px;
+}
+
+.setting-item {
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.setting-item:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.setting-item label {
+    display: block;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+    font-size: 1.05em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.setting-item input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: #667eea;
+}
+
+.setting-item select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    color: #333;
+    background: white;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+    font-family: inherit;
+}
+
+.setting-item select:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.setting-item select:hover {
+    border-color: #667eea;
+}
+
+.display-value {
+    margin: 8px 0 0 0;
+    color: #666;
+    font-size: 1.05em;
+    padding: 10px 0;
+    border-bottom: 1px dashed #ddd;
+}
+
+.setting-description {
+    margin: 8px 0 0 0;
+    color: #999;
+    font-size: 0.9em;
+    line-height: 1.5;
+}
+
+/* Buttons in Settings */
+.btn {
+    padding: 12px 24px;
+    font-size: 1em;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-block;
+    text-align: center;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+    background: white;
+    color: #667eea;
+    border: 2px solid #667eea;
+    width: 100%;
+    text-align: left;
+}
+
+.btn-secondary:hover {
+    background: #667eea;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.btn-tertiary {
+    background: #f0f0f0;
+    color: #333;
+    border: 2px solid #ddd;
+}
+
+.btn-tertiary:hover {
+    background: #e0e0e0;
+}
+
+/* Settings Actions */
+.settings-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 40px;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .nav-container {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .nav-title {
+        font-size: 1.2em;
+    }
+
+    .settings-section {
+        padding: 20px;
+    }
+
+    .settings-section h2 {
+        font-size: 1.2em;
+    }
+
+    .setting-item label {
+        font-size: 1em;
+    }
+
+    .settings-actions {
+        grid-template-columns: 1fr;
+    }
+}

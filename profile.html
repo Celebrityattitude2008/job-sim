@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - JobSim</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="global-style.css">
+    <link rel="stylesheet" href="profile-style.css">
+</head>
+<body>
+    <!-- Floating Icons Background -->
+    <div class="floating-icons-container" id="floating-icons-container"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">← Back to Game</a>
+            <button class="nav-logout" id="logoutBtn">Logout</button>
+        </div>
+    </nav>
+
+    <div class="profile-container">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="profile-avatar" id="profileAvatar"></div>
+            <div class="profile-info">
+                <h1 id="profileName">Player Name</h1>
+                <p id="profileField">Field of Study</p>
+                <p class="profile-email" id="profileEmail">email@example.com</p>
+            </div>
+        </div>
+
+        <!-- Stats Overview -->
+        <div class="stats-overview">
+            <div class="stat-block current">
+                <h3>Current Run</h3>
+                <div class="stat-items">
+                    <div class="stat-row">
+                        <span class="stat-label">💰 Money:</span>
+                        <span class="stat-value" id="currentMoney">₦0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">😰 Stress:</span>
+                        <span class="stat-value" id="currentStress">0%</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">📈 Growth:</span>
+                        <span class="stat-value" id="currentGrowth">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">📅 Day:</span>
+                        <span class="stat-value" id="currentDay">1</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-block best">
+                <h3>Best Run</h3>
+                <div class="stat-items">
+                    <div class="stat-row">
+                        <span class="stat-label">💰 Best Money:</span>
+                        <span class="stat-value" id="bestMoney">₦0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">📈 Best Growth:</span>
+                        <span class="stat-value" id="bestGrowth">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">🎮 Games Played:</span>
+                        <span class="stat-value" id="gamesPlayed">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">✅ Completed:</span>
+                        <span class="stat-value" id="completed">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Bars -->
+        <div class="progress-section">
+            <h2>Performance Metrics</h2>
+            <div class="progress-item">
+                <div class="progress-header">
+                    <span>💰 Money Growth</span>
+                    <span id="moneyPercent">50%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="moneyProgressFill"></div>
+                </div>
+            </div>
+
+            <div class="progress-item">
+                <div class="progress-header">
+                    <span>📈 Business Growth</span>
+                    <span id="growthPercent">50%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="growthProgressFill" style="background: #4CAF50;"></div>
+                </div>
+            </div>
+
+            <div class="progress-item">
+                <div class="progress-header">
+                    <span>😤 Stress Level</span>
+                    <span id="stressPercent">50%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="stressProgressFill" style="background: #FF6B6B;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Achievements -->
+        <div class="achievements-section">
+            <h2>🏆 Your Achievements</h2>
+            <div class="achievements-grid" id="achievementsGrid">
+                <div class="achievement-card">
+                    <div class="achievement-placeholder">Loading...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Games -->
+        <div class="recent-games-section">
+            <h2>📊 Game Statistics</h2>
+            <div class="stats-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Match</th>
+                            <th>Money</th>
+                            <th>Growth</th>
+                            <th>Stress</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="gamesTable">
+                        <tr>
+                            <td colspan="5" class="no-data">No games recorded yet</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="profile-actions">
+            <button class="btn btn-primary" id="playBtn">Play Game</button>
+            <button class="btn btn-secondary" id="settingsBtn">Settings</button>
+            <button class="btn btn-secondary" id="leaderboardBtn">Leaderboard</button>
+        </div>
+    </div>
+
+    <script src="profile-script.js"></script>
+    <script>
+        // Generate floating icons
+        function createFloatingIcons() {
+            const container = document.getElementById('floating-icons-container');
+            const icons = ['📱', '💼', '📊', '🎯', '⚡', '🏆', '💡', '🚀', '📈', '✨', '🎓', '🔥'];
+            const iconCount = 10;
+
+            for (let i = 0; i < iconCount; i++) {
+                const icon = document.createElement('div');
+                icon.className = 'floating-icon';
+                icon.textContent = icons[Math.floor(Math.random() * icons.length)];
+                icon.style.left = Math.random() * 100 + '%';
+                icon.style.top = Math.random() * 100 + '%';
+                icon.style.animationDuration = (Math.random() * 10 + 15) + 's';
+                icon.style.animationDelay = Math.random() * 5 + 's';
+                container.appendChild(icon);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', createFloatingIcons);
+    </script>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard - JobSim</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="global-style.css">
+    <link rel="stylesheet" href="leaderboard-style.css">
+</head>
+<body>
+    <!-- Floating Icons Background -->
+    <div class="floating-icons-container" id="floating-icons-container"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">← Back to Game</a>
+            <h1 class="nav-title">🏆 Global Leaderboard</h1>
+            <button class="nav-logout" id="logoutBtn">Logout</button>
+        </div>
+    </nav>
+
+    <div class="leaderboard-container">
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <h2>Filter by Field of Study</h2>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-field="all">All Fields</button>
+                <button class="filter-btn" data-field="Medicine">Medicine</button>
+                <button class="filter-btn" data-field="Engineering">Engineering</button>
+                <button class="filter-btn" data-field="Law">Law</button>
+                <button class="filter-btn" data-field="Business">Business</button>
+                <button class="filter-btn" data-field="Computer Science">Computer Science</button>
+                <button class="filter-btn" data-field="Mass Communication">Mass Comm</button>
+                <button class="filter-btn" data-field="Nursing">Nursing</button>
+                <button class="filter-btn" data-field="Agriculture">Agriculture</button>
+                <button class="filter-btn" data-field="Political Science">Political Science</button>
+                <button class="filter-btn" data-field="Education">Education</button>
+            </div>
+        </div>
+
+        <!-- Leaderboard Table -->
+        <div class="leaderboard-table-container">
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th class="rank">Rank</th>
+                        <th class="player">Player</th>
+                        <th class="field">Field</th>
+                        <th class="money">💰 Money</th>
+                        <th class="growth">📈 Growth</th>
+                        <th class="stress">😰 Stress</th>
+                        <th class="days">📅 Days</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboardBody">
+                    <tr class="loading-row">
+                        <td colspan="7">Loading leaderboard...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Your Rank -->
+        <div class="your-rank-section">
+            <h2>Your Position</h2>
+            <div class="your-rank-card" id="yourRankCard">
+                <div class="rank-info">
+                    <span class="rank-position">#--</span>
+                    <div class="rank-details">
+                        <p class="rank-name">Not on leaderboard yet</p>
+                        <p class="rank-field">Keep playing to earn your spot!</p>
+                    </div>
+                </div>
+                <div class="rank-stats">
+                    <span class="stat">💰 ₦--</span>
+                    <span class="stat">📈 --</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Links -->
+        <div class="leaderboard-nav">
+            <a href="profile.html" class="nav-link">← My Profile</a>
+            <a href="achievements.html" class="nav-link">Achievements →</a>
+        </div>
+    </div>
+
+    <script src="leaderboard-script.js"></script>
+    <script>
+        // Generate floating icons
+        function createFloatingIcons() {
+            const container = document.getElementById('floating-icons-container');
+            const icons = ['📱', '💼', '📊', '🎯', '⚡', '🏆', '💡', '🚀', '📈', '✨', '🎓', '🔥'];
+            const iconCount = 10;
+
+            for (let i = 0; i < iconCount; i++) {
+                const icon = document.createElement('div');
+                icon.className = 'floating-icon';
+                icon.textContent = icons[Math.floor(Math.random() * icons.length)];
+                icon.style.left = Math.random() * 100 + '%';
+                icon.style.top = Math.random() * 100 + '%';
+                icon.style.animationDuration = (Math.random() * 10 + 15) + 's';
+                icon.style.animationDelay = Math.random() * 5 + 's';
+                container.appendChild(icon);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', createFloatingIcons);
+    </script>
+</body>
+</html>

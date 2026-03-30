@@ -3,9 +3,9 @@ function checkAuthentication() {
     const userId = localStorage.getItem('userId');
     const userEmail = localStorage.getItem('userEmail');
     
-    // If user is not logged in, redirect to login page
+    // If user is not logged in, redirect to landing page
     if (!userId || !userEmail) {
-        window.location.href = 'login.html';
+        window.location.href = 'landing.html';
         return false;
     }
     
@@ -16,6 +16,119 @@ function checkAuthentication() {
 if (!checkAuthentication()) {
     // Stop execution - user will be redirected
     throw new Error('User not authenticated');
+}
+
+// ============ LOAD THEME ON PAGE START ============
+function initializeTheme() {
+    const theme = localStorage.getItem('theme') || 'dark';
+    const root = document.documentElement;
+    root.setAttribute('data-theme', theme);
+    
+    if (theme === 'light') {
+        document.body.classList.remove('dark-mode');
+        document.body.classList.add('light-mode');
+    } else if (theme === 'dark') {
+        document.body.classList.add('dark-mode');
+        document.body.classList.remove('light-mode');
+    } else if (theme === 'auto') {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (prefersDark) {
+            document.body.classList.add('dark-mode');
+            document.body.classList.remove('light-mode');
+        }
+    }
+}
+
+// ============ DIFFICULTY MULTIPLIER SYSTEM ============
+function getDifficultyMultiplier() {
+    const difficulty = localStorage.getItem('gameDifficulty') || 'normal';
+    const multipliers = {
+        'easy': { money: 1.5, stress: 0.5, growth: 0.8 },
+        'normal': { money: 1.0, stress: 1.0, growth: 1.0 },
+        'hard': { money: 0.7, stress: 1.5, growth: 1.3 },
+        'nightmare': { money: 0.5, stress: 2.0, growth: 1.8 }
+    };
+    return multipliers[difficulty] || multipliers['normal'];
+}
+
+function applyDifficultyMultipliers(impacts) {
+    const multiplier = getDifficultyMultiplier();
+    return {
+        money: Math.round(impacts.money * multiplier.money),
+        stress: Math.round(impacts.stress * multiplier.stress),
+        businessGrowth: Math.round(impacts.businessGrowth * multiplier.growth)
+    };
+}
+
+// ============ SOUND SYSTEM ============
+function playSound(soundType) {
+    const soundEnabled = localStorage.getItem('soundEnabled') !== 'false';
+    if (!soundEnabled) return;
+    
+    // Use Web Audio API for simple sound effects
+    try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const now = audioContext.currentTime;
+        
+        switch(soundType) {
+            case 'click':
+                const osc1 = audioContext.createOscillator();
+                const gain1 = audioContext.createGain();
+                osc1.connect(gain1);
+                gain1.connect(audioContext.destination);
+                osc1.frequency.value = 400;
+                gain1.gain.setValueAtTime(0.1, now);
+                gain1.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                osc1.start(now);
+                osc1.stop(now + 0.1);
+                break;
+            case 'success':
+                for (let i = 0; i < 3; i++) {
+                    const osc = audioContext.createOscillator();
+                    const gain = audioContext.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioContext.destination);
+                    osc.frequency.value = 500 + (i * 150);
+                    gain.gain.setValueAtTime(0.1, now + i * 0.1);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.1 + 0.15);
+                    osc.start(now + i * 0.1);
+                    osc.stop(now + i * 0.1 + 0.15);
+                }
+                break;
+            case 'error':
+                const oscErr = audioContext.createOscillator();
+                const gainErr = audioContext.createGain();
+                oscErr.connect(gainErr);
+                gainErr.connect(audioContext.destination);
+                oscErr.frequency.value = 200;
+                gainErr.gain.setValueAtTime(0.1, now);
+                gainErr.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                oscErr.start(now);
+                oscErr.stop(now + 0.2);
+                break;
+        }
+    } catch (e) {
+        console.log('Sound not available');
+    }
+}
+
+// ============ AUTOSAVE SYSTEM ============
+function initializeAutosave() {
+    const autosave = localStorage.getItem('autosave') || 'on';
+    if (autosave === 'on') {
+        // Auto-save every 30 seconds
+        setInterval(() => {
+            saveGameProgress();
+        }, 30000);
+    }
+}
+
+function saveGameProgress() {
+    localStorage.setItem('money', gameState.money);
+    localStorage.setItem('stress', gameState.stress);
+    localStorage.setItem('growth', gameState.businessGrowth);
+    localStorage.setItem('currentDay', gameState.day);
+    console.log('Game auto-saved');
 }
 
 // ============ GAME STATE ============
@@ -814,7 +927,14 @@ function renderHeader() {
                 Stress <span>${gameState.stress}</span> • 
                 Growth <span>${gameState.businessGrowth}</span>
             </div>
-            <button class="logout-btn" onclick="logoutUser()">Logout</button>
+            <div class="header-nav">
+                <button class="nav-btn" onclick="window.location.href='profile.html'" title="View Profile">👤</button>
+                <button class="nav-btn" onclick="window.location.href='leaderboard.html'" title="Leaderboard">🏆</button>
+                <button class="nav-btn" onclick="window.location.href='achievements.html'" title="Achievements">⭐</button>
+                <button class="nav-btn" onclick="window.location.href='settings.html'" title="Settings">⚙️</button>
+                <button class="nav-btn" onclick="window.location.href='tutorial.html'" title="Tutorial">📖</button>
+                <button class="logout-btn" onclick="logoutUser()">Logout</button>
+            </div>
         </div>
     `;
     document.querySelector('.header').innerHTML = headerHTML;
@@ -829,8 +949,9 @@ function logoutUser() {
         localStorage.removeItem('firstName');
         localStorage.removeItem('fieldOfStudy');
         
-        // Redirect to login page
-        window.location.href = 'login.html';
+        // Redirect to landing page after logout
+        playSound('click');
+        window.location.href = 'landing.html';
     }
 }
 
@@ -1046,33 +1167,27 @@ function renderGameOverScreen() {
 }
 
 function renderFinishScreen() {
-    const personality = getPersonalityTitle();
+    // Save final stats to localStorage
+    localStorage.setItem('money', gameState.money);
+    localStorage.setItem('stress', gameState.stress);
+    localStorage.setItem('growth', gameState.businessGrowth);
+    localStorage.setItem('currentDay', gameState.day);
 
+    // Redirect to game end page after a short delay
+    setTimeout(() => {
+        window.location.href = 'gameend.html';
+    }, 1000);
+
+    // Show a brief completion message
+    const personality = getPersonalityTitle();
     const finishHTML = `
         <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 30;">
             <div class="finish-screen">
                 <div class="finish-modal">
                     <div class="finish-emoji">${personality.emoji}</div>
                     <div class="finish-title">${personality.title}</div>
-                    <div class="finish-message">${personality.message}</div>
-                    <div class="finish-score">
-                        <div class="finish-score-value">Day 30! 🎉</div>
-                        <div class="finish-stats">
-                            <div class="finish-stat">
-                                <span>💰 Money:</span>
-                                <strong>₦${gameState.money.toLocaleString()}</strong>
-                            </div>
-                            <div class="finish-stat">
-                                <span>😤 Stress:</span>
-                                <strong>${gameState.stress}/100</strong>
-                            </div>
-                            <div class="finish-stat">
-                                <span>📈 Growth:</span>
-                                <strong>${gameState.businessGrowth}/100</strong>
-                            </div>
-                        </div>
-                    </div>
-                    <button class="btn btn-restart" onclick="restartGame()">Play Again 🔄</button>
+                    <div class="finish-message">Congratulations! Redirecting to results...</div>
+                    <div style="text-align: center; margin-top: 20px;">⏳ Loading...</div>
                 </div>
             </div>
         </div>
@@ -1083,6 +1198,8 @@ function renderFinishScreen() {
 
 // ============ GAME LOGIC ============
 function handleChoice(choiceIndex) {
+    playSound('click');
+    
     const scenario = SCENARIOS[gameState.scenarioIndex];
     const choice = scenario.choices[choiceIndex];
 
@@ -1091,19 +1208,28 @@ function handleChoice(choiceIndex) {
     gameState.oldStress = gameState.stress;
     gameState.oldBusinessGrowth = gameState.businessGrowth;
 
-    gameState.money += choice.impacts.money;
-    gameState.stress += choice.impacts.stress;
-    gameState.businessGrowth = Math.min(gameState.businessGrowth + choice.impacts.businessGrowth, 100);
+    // Apply difficulty multipliers to impacts
+    const adjustedImpacts = applyDifficultyMultipliers(choice.impacts);
+    
+    gameState.money += adjustedImpacts.money;
+    gameState.stress += adjustedImpacts.stress;
+    gameState.businessGrowth = Math.min(gameState.businessGrowth + adjustedImpacts.businessGrowth, 100);
 
     gameState.stress = Math.max(0, Math.min(gameState.stress, 100));
     gameState.money = Math.max(0, gameState.money);
     gameState.businessGrowth = Math.max(0, gameState.businessGrowth);
 
+    // Save progress
+    saveGameProgress();
+    
     gameState.phase = 'consequence';
 
-    // Trigger effects
-    if (choice.impacts.money < -20000) {
+    // Trigger effects and sounds
+    if (adjustedImpacts.money < -20000) {
+        playSound('error');
         triggerMoneyFlash();
+    } else if (adjustedImpacts.money > 20000) {
+        playSound('success');
     }
 
     render();
@@ -1191,6 +1317,12 @@ function triggerMoneyFlash() {
 
 // ============ INITIALIZATION ============
 document.addEventListener('DOMContentLoaded', () => {
+    // Initialize theme
+    initializeTheme();
+    
+    // Initialize autosave system
+    initializeAutosave();
+    
     document.body.innerHTML = `
         <div class="header"></div>
         <div class="container"></div>

@@ -1,0 +1,382 @@
+/* ============ LEADERBOARD PAGE STYLES ============ */
+
+.navbar {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 15px 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.nav-logo {
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1em;
+    transition: opacity 0.3s ease;
+}
+
+.nav-logo:hover {
+    opacity: 0.8;
+}
+
+.nav-title {
+    color: white;
+    margin: 0;
+    flex: 1;
+    text-align: center;
+    font-size: 1.5em;
+}
+
+.nav-logout {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.nav-logout:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.leaderboard-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+/* Filter Section */
+.filter-section {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    margin-bottom: 40px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.filter-section h2 {
+    margin: 0 0 20px 0;
+    font-size: 1.3em;
+    color: #333;
+}
+
+.filter-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.filter-btn {
+    padding: 10px 20px;
+    background: white;
+    border: 2px solid #ddd;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    color: #666;
+}
+
+.filter-btn:hover {
+    border-color: #667eea;
+    color: #667eea;
+}
+
+.filter-btn.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-color: #667eea;
+}
+
+/* Leaderboard Table */
+.leaderboard-table-container {
+    background: white;
+    padding: 0;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    margin-bottom: 40px;
+}
+
+.leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.leaderboard-table thead {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.leaderboard-table th {
+    padding: 20px;
+    text-align: left;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.9em;
+    letter-spacing: 0.5px;
+}
+
+.leaderboard-table th.rank {
+    width: 80px;
+}
+
+.leaderboard-table th.player {
+    flex: 1;
+}
+
+.leaderboard-table th.field {
+    width: 120px;
+}
+
+.leaderboard-table th.money {
+    width: 120px;
+    text-align: right;
+}
+
+.leaderboard-table th.growth {
+    width: 100px;
+    text-align: right;
+}
+
+.leaderboard-table th.stress {
+    width: 100px;
+    text-align: right;
+}
+
+.leaderboard-table th.days {
+    width: 80px;
+    text-align: right;
+}
+
+.leaderboard-table tbody tr {
+    border-bottom: 1px solid #eee;
+    transition: background 0.3s ease;
+}
+
+.leaderboard-table tbody tr:hover {
+    background: #f9f9f9;
+}
+
+.leaderboard-table tbody tr:nth-child(1) {
+    background: linear-gradient(90deg, rgba(255, 215, 0, 0.1) 0%, transparent 100%);
+    font-weight: 600;
+}
+
+.leaderboard-table tbody tr:nth-child(2) {
+    background: linear-gradient(90deg, rgba(192, 192, 192, 0.1) 0%, transparent 100%);
+}
+
+.leaderboard-table tbody tr:nth-child(3) {
+    background: linear-gradient(90deg, rgba(205, 127, 50, 0.1) 0%, transparent 100%);
+}
+
+.leaderboard-table td {
+    padding: 15px 20px;
+    color: #333;
+}
+
+.rank {
+    font-weight: 700;
+    font-size: 1.2em;
+    color: #667eea;
+}
+
+.rank-medal {
+    margin-right: 5px;
+}
+
+.player {
+    font-weight: 600;
+}
+
+.field {
+    color: #666;
+    font-size: 0.95em;
+}
+
+.money {
+    font-weight: 600;
+    color: #4CAF50;
+    text-align: right;
+}
+
+.growth {
+    font-weight: 600;
+    color: #2196F3;
+    text-align: right;
+}
+
+.stress {
+    text-align: right;
+    color: #666;
+}
+
+.days {
+    text-align: right;
+    font-weight: 500;
+    color: #999;
+}
+
+.loading-row td {
+    text-align: center;
+    padding: 30px;
+    color: #999;
+}
+
+/* Your Rank Section */
+.your-rank-section {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    margin-bottom: 40px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.your-rank-section h2 {
+    margin: 0 0 20px 0;
+    font-size: 1.3em;
+    color: #333;
+}
+
+.your-rank-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 25px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+}
+
+.rank-info {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.rank-position {
+    font-size: 2.5em;
+    font-weight: 800;
+}
+
+.rank-details p {
+    margin: 0;
+}
+
+.rank-name {
+    font-size: 1.2em;
+    font-weight: 600;
+}
+
+.rank-field {
+    font-size: 0.95em;
+    opacity: 0.9;
+    margin-top: 5px;
+}
+
+.rank-stats {
+    display: flex;
+    gap: 20px;
+}
+
+.stat {
+    font-weight: 600;
+    font-size: 1.1em;
+}
+
+/* Navigation Links */
+.leaderboard-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.nav-link {
+    flex: 1;
+    padding: 15px;
+    text-align: center;
+    background: white;
+    color: #667eea;
+    text-decoration: none;
+    border: 2px solid #667eea;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+    background: #667eea;
+    color: white;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .nav-container {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .nav-title {
+        font-size: 1.2em;
+    }
+
+    .filter-buttons {
+        gap: 8px;
+    }
+
+    .filter-btn {
+        padding: 8px 15px;
+        font-size: 0.9em;
+    }
+
+    .leaderboard-table th {
+        padding: 12px;
+        font-size: 0.8em;
+    }
+
+    .leaderboard-table th.field {
+        width: 100px;
+    }
+
+    .leaderboard-table td {
+        padding: 12px;
+        font-size: 0.9em;
+    }
+
+    .your-rank-card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .rank-info {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .rank-stats {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .leaderboard-nav {
+        flex-direction: column;
+    }
+}
