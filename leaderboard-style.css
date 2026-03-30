@@ -380,3 +380,46 @@
         flex-direction: column;
     }
 }
+
+/* ============ DARK MODE SUPPORT ============ */
+body.dark-mode {
+    background-color: #1a1a1a;
+}
+
+body.dark-mode .navbar {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    border-bottom: 1px solid #3a3a3a;
+}
+
+body.dark-mode .leaderboard-container,
+body.dark-mode .leaderboard-table,
+body.dark-mode .your-rank-card {
+    background-color: #252525;
+    color: #f0f0f0;
+    border-color: #3a3a3a;
+}
+
+body.dark-mode .leaderboard-table th {
+    background-color: #1a1a1a;
+    color: #f0f0f0;
+}
+
+body.dark-mode .leaderboard-table td {
+    color: #f0f0f0;
+    border-bottom-color: #3a3a3a;
+}
+
+body.dark-mode .nav-title {
+    color: #f0f0f0;
+}
+
+body.dark-mode .filter-btn {
+    background-color: #1a1a1a;
+    color: #f0f0f0;
+    border-color: #3a3a3a;
+}
+
+body.dark-mode .filter-btn.active {
+    background-color: #667eea;
+    color: white;
+}

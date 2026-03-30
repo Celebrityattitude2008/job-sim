@@ -146,6 +146,7 @@ async function checkBackendHealth() {
 
 // Check backend on page load
 window.addEventListener('load', () => {
+    initializeFloatingIcons();
     checkBackendHealth();
 });
 

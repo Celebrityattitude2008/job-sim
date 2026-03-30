@@ -459,3 +459,159 @@ a:hover {
         padding: 0 1rem;
     }
 }
+
+/* ============ DARK AND LIGHT MODE THEMES ============ */
+
+/* Default - Light Mode */
+:root,
+[data-theme="light"],
+body.light-mode {
+    --bg-primary: #FFFFFF;
+    --bg-secondary: #F9FAFB;
+    --text-primary: #0F172A;
+    --text-secondary: #666666;
+    --border-primary: #E5E7EB;
+    --card-bg: #FFFFFF;
+    --card-border: #E5E7EB;
+    --input-bg: #FFFFFF;
+    --input-border: #D1D5DB;
+}
+
+/* Dark Mode */
+[data-theme="dark"],
+body.dark-mode {
+    --bg-primary: #1a1a1a;
+    --bg-secondary: #2a2a2a;
+    --text-primary: #f0f0f0;
+    --text-secondary: #a0a0a0;
+    --border-primary: #3a3a3a;
+    --card-bg: #252525;
+    --card-border: #3a3a3a;
+    --input-bg: #1f1f1f;
+    --input-border: #3a3a3a;
+}
+
+/* Light Mode Specific Overrides */
+body.light-mode {
+    background-color: #FFFFFF;
+    color: #0F172A;
+}
+
+body.light-mode .navbar {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+body.light-mode .card,
+body.light-mode .settings-section {
+    background-color: #FFFFFF;
+    color: #0F172A;
+    border: 1px solid #E5E7EB;
+}
+
+body.light-mode input[type="text"],
+body.light-mode input[type="email"],
+body.light-mode input[type="password"],
+body.light-mode select,
+body.light-mode textarea {
+    background-color: #FFFFFF;
+    color: #0F172A;
+    border-color: #D1D5DB;
+}
+
+body.light-mode input[type="text"]:focus,
+body.light-mode input[type="email"]:focus,
+body.light-mode input[type="password"]:focus,
+body.light-mode select:focus,
+body.light-mode textarea:focus {
+    border-color: #667eea;
+    background-color: #FFFFFF;
+    color: #0F172A;
+}
+
+/* Dark Mode Specific Overrides */
+body.dark-mode {
+    background-color: #1a1a1a;
+    color: #f0f0f0;
+}
+
+body.dark-mode .navbar {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    color: #f0f0f0;
+    border-bottom: 1px solid #3a3a3a;
+}
+
+body.dark-mode .card,
+body.dark-mode .settings-section {
+    background-color: #252525;
+    color: #f0f0f0;
+    border: 1px solid #3a3a3a;
+}
+
+body.dark-mode input[type="text"],
+body.dark-mode input[type="email"],
+body.dark-mode input[type="password"],
+body.dark-mode select,
+body.dark-mode textarea {
+    background-color: #1f1f1f;
+    color: #f0f0f0;
+    border-color: #3a3a3a;
+}
+
+body.dark-mode input[type="text"]:focus,
+body.dark-mode input[type="email"]:focus,
+body.dark-mode input[type="password"]:focus,
+body.dark-mode select:focus,
+body.dark-mode textarea:focus {
+    border-color: #667eea;
+    background-color: #252525;
+    color: #f0f0f0;
+}
+
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6 {
+    color: #f0f0f0;
+}
+
+body.dark-mode p {
+    color: #a0a0a0;
+}
+
+body.dark-mode a {
+    color: #8ab4f8;
+}
+
+body.dark-mode a:hover {
+    color: #a8c5ff;
+}
+
+body.dark-mode .setting-description,
+body.dark-mode .display-value {
+    color: #a0a0a0;
+}
+
+body.dark-mode .btn-secondary {
+    background: transparent;
+    color: #8ab4f8;
+    border-color: #667eea;
+}
+
+body.dark-mode .btn-secondary:hover {
+    background: #667eea;
+    color: white;
+}
+
+body.dark-mode .btn-tertiary {
+    background: #2a2a2a;
+    color: #f0f0f0;
+    border-color: #3a3a3a;
+}
+
+body.dark-mode .btn-tertiary:hover {
+    background: #3a3a3a;
+    border-color: #4a4a4a;
+}

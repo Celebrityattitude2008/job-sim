@@ -17,6 +17,20 @@ window.addEventListener('load', () => {
     checkAuthTutorial();
 });
 
+// ============ THEME APPLICATION ============
+function applyThemeTutorial(theme) {
+    const root = document.documentElement;
+    root.setAttribute('data-theme', theme);
+    
+    if (theme === 'light') {
+        document.body.classList.remove('dark-mode');
+        document.body.classList.add('light-mode');
+    } else if (theme === 'dark') {
+        document.body.classList.add('dark-mode');
+        document.body.classList.remove('light-mode');
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     // Load and apply theme
     const theme = localStorage.getItem('theme') || 'dark';
@@ -31,21 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.textContent = parent.classList.contains('open') ? '[-]' : '[+]';
         });
     });
-});
 
-// ============ THEME APPLICATION ============
-function applyThemeTutorial(theme) {
-    const root = document.documentElement;
-    root.setAttribute('data-theme', theme);
-    
-    if (theme === 'light') {
-        document.body.classList.remove('dark-mode');
-        document.body.classList.add('light-mode');
-    } else if (theme === 'dark') {
-        document.body.classList.add('dark-mode');
-        document.body.classList.remove('light-mode');
-    }
-}
     // Smooth scroll behavior for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {

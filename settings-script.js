@@ -38,38 +38,60 @@ async function loadSettings() {
             return;
         }
 
-        // Display account info
-        document.getElementById('usernameDisplay').textContent = localStorage.getItem('firstName') || 'Player';
-        document.getElementById('emailDisplay').textContent = localStorage.getItem('userEmail') || 'email@example.com';
-        document.getElementById('fieldDisplay').textContent = localStorage.getItem('fieldOfStudy') || 'Unknown';
-
-        // Fetch settings from backend
-        const response = await fetch(`${BACKEND_URL}/settings/${userId}`, {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' }
-        });
-
-        if (!response.ok) {
-            console.warn('Could not fetch settings from server, using local settings');
-            loadLocalSettings();
-            return;
-        }
-
-        const data = await response.json();
-        const settings = data.settings || {};
-
-        // Apply settings to UI
-        document.getElementById('soundToggle').checked = settings.sound_enabled !== false;
-        document.getElementById('notificationsToggle').checked = settings.notifications_enabled !== false;
-        document.getElementById('themeSelect').value = settings.theme || 'dark';
-        document.getElementById('difficultySelect').value = settings.difficulty || 'normal';
-        document.getElementById('autosaveSelect').value = settings.autosave || 'on';
+        // Display account info from localStorage first
+        const firstName = localStorage.getItem('firstName') || 'Player';
+        const userEmail = localStorage.getItem('userEmail') || 'email@example.com';
+        const fieldOfStudy = localStorage.getItem('fieldOfStudy') || 'Unknown';
         
-        // Store in localStorage for game use
-        localStorage.setItem('soundEnabled', settings.sound_enabled ? 'true' : 'false');
-        localStorage.setItem('theme', settings.theme || 'dark');
-        localStorage.setItem('gameDifficulty', settings.difficulty || 'normal');
-        localStorage.setItem('autosave', settings.autosave || 'on');
+        // Set display immediately from localStorage
+        const usernameDisplay = document.getElementById('usernameDisplay');
+        const emailDisplay = document.getElementById('emailDisplay');
+        const fieldDisplay = document.getElementById('fieldDisplay');
+        
+        if (usernameDisplay) usernameDisplay.textContent = firstName;
+        if (emailDisplay) emailDisplay.textContent = userEmail;
+        if (fieldDisplay) fieldDisplay.textContent = fieldOfStudy;
+
+        // Load local settings
+        loadLocalSettings();
+
+        // Try to fetch settings from backend, but don't block if it fails
+        try {
+            const response = await fetch(`${BACKEND_URL}/settings/${userId}`, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                const settings = data.settings || {};
+
+                // Update UI with backend settings
+                if (document.getElementById('soundToggle')) {
+                    document.getElementById('soundToggle').checked = settings.sound_enabled !== false;
+                }
+                if (document.getElementById('notificationsToggle')) {
+                    document.getElementById('notificationsToggle').checked = settings.notifications_enabled !== false;
+                }
+                if (document.getElementById('themeSelect')) {
+                    document.getElementById('themeSelect').value = settings.theme || 'dark';
+                }
+                if (document.getElementById('difficultySelect')) {
+                    document.getElementById('difficultySelect').value = settings.difficulty || 'normal';
+                }
+                if (document.getElementById('autosaveSelect')) {
+                    document.getElementById('autosaveSelect').value = settings.autosave || 'on';
+                }
+                
+                // Store in localStorage for game use
+                localStorage.setItem('soundEnabled', settings.sound_enabled ? 'true' : 'false');
+                localStorage.setItem('theme', settings.theme || 'dark');
+                localStorage.setItem('gameDifficulty', settings.difficulty || 'normal');
+                localStorage.setItem('autosave', settings.autosave || 'on');
+            }
+        } catch (error) {
+            console.warn('Could not fetch settings from server, using local settings:', error);
+        }
 
     } catch (error) {
         console.error('Error loading settings:', error);
@@ -97,7 +119,9 @@ function updateLogoutButtonVisibility() {
     if (logoutBtn) {
         logoutBtn.style.display = 'block';
     }
-} ============ ============
+}
+
+// ============ SETUP EVENT LISTENERS ============
 function setupEventListeners() {
     const userId = localStorage.getItem('userId');
 
@@ -128,6 +152,45 @@ function setupEventListeners() {
         localStorage.clear();
         window.location.href = 'landing.html';
     });
+
+    // Real-time theme change
+    document.getElementById('themeSelect').addEventListener('change', (e) => {
+        applyTheme(e.target.value);
+        localStorage.setItem('theme', e.target.value);
+    });
+
+    // Real-time difficulty change
+    document.getElementById('difficultySelect').addEventListener('change', (e) => {
+        localStorage.setItem('gameDifficulty', e.target.value);
+    });
+
+    // Real-time sound toggle
+    document.getElementById('soundToggle').addEventListener('change', (e) => {
+        localStorage.setItem('soundEnabled', e.target.checked ? 'true' : 'false');
+    });
+
+    // Theme toggle button in navbar
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    if (themeToggleBtn) {
+        themeToggleBtn.addEventListener('click', () => {
+            const currentTheme = localStorage.getItem('theme') || 'dark';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            applyTheme(newTheme);
+            document.getElementById('themeSelect').value = newTheme;
+            updateThemeToggleIcon(newTheme);
+        });
+        // Update icon on load
+        const currentTheme = localStorage.getItem('theme') || 'dark';
+        updateThemeToggleIcon(currentTheme);
+    }
+}
+
+// Update theme toggle button icon
+function updateThemeToggleIcon(theme) {
+    const btn = document.getElementById('themeToggleBtn');
+    if (btn) {
+        btn.textContent = theme === 'dark' ? '☀️' : '🌙';
+    }
 }
 
 // ============ SAVE SETTINGS ============

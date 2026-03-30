@@ -131,18 +131,34 @@ function saveGameProgress() {
     console.log('Game auto-saved');
 }
 
+// ============ LOAD SAVED PROGRESS ============
+function loadSavedProgress() {
+    const savedMoney = parseInt(localStorage.getItem('money')) || 150000;
+    const savedStress = parseInt(localStorage.getItem('stress')) || 30;
+    const savedGrowth = parseInt(localStorage.getItem('growth')) || 20;
+    const savedDay = parseInt(localStorage.getItem('currentDay')) || 1;
+    
+    return {
+        money: savedMoney,
+        stress: savedStress,
+        businessGrowth: savedGrowth,
+        day: savedDay
+    };
+}
+
 // ============ GAME STATE ============
+const savedProgress = loadSavedProgress();
 let gameState = {
-    day: 1,
-    money: 150000,
-    stress: 30,
-    businessGrowth: 20,
-    phase: 'playing', // 'playing' | 'consequence' | 'dailySummary' | 'gameOver' | 'finished'
+    day: savedProgress.day,
+    money: savedProgress.money,
+    stress: savedProgress.stress,
+    businessGrowth: savedProgress.businessGrowth,
+    phase: 'playing',
     scenarioIndex: -1,
     selectedChoice: null,
-    oldMoney: 150000,
-    oldStress: 30,
-    oldBusinessGrowth: 20,
+    oldMoney: savedProgress.money,
+    oldStress: savedProgress.stress,
+    oldBusinessGrowth: savedProgress.businessGrowth,
     userId: localStorage.getItem('userId'),
     firstName: localStorage.getItem('firstName'),
     fieldOfStudy: localStorage.getItem('fieldOfStudy'),
@@ -918,26 +934,34 @@ function renderHeader() {
     const headerHTML = `
         <div class="header-content">
             <div class="header-left">
-                <h1>📱 JobSim Abuja</h1>
-                <div class="user-info">Welcome, ${gameState.firstName || 'Player'}! (${gameState.fieldOfStudy || 'Field Unknown'})</div>
+                <h1>JobSim Nigeria</h1>
+                <div class="user-info">Welcome, ${gameState.firstName || 'Player'}! | ${gameState.fieldOfStudy || 'Field Unknown'}</div>
             </div>
             <div class="header-stats">
-                Day <span>${gameState.day}/30</span> • 
-                Money ₦<span>${gameState.money.toLocaleString()}</span> • 
-                Stress <span>${gameState.stress}</span> • 
+                Day <span>${gameState.day}/30</span> | 
+                Money NGN<span>${gameState.money.toLocaleString()}</span> | 
+                Stress <span>${gameState.stress}%</span> | 
                 Growth <span>${gameState.businessGrowth}</span>
             </div>
-            <div class="header-nav">
-                <button class="nav-btn" onclick="window.location.href='profile.html'" title="View Profile">👤</button>
-                <button class="nav-btn" onclick="window.location.href='leaderboard.html'" title="Leaderboard">🏆</button>
-                <button class="nav-btn" onclick="window.location.href='achievements.html'" title="Achievements">⭐</button>
-                <button class="nav-btn" onclick="window.location.href='settings.html'" title="Settings">⚙️</button>
-                <button class="nav-btn" onclick="window.location.href='tutorial.html'" title="Tutorial">📖</button>
+            <button class="nav-menu-toggle" id="navMenuToggle" onclick="toggleNavMenu()">Menu</button>
+            <div class="header-nav" id="headerNav">
+                <button class="nav-btn" onclick="window.location.href='profile.html'" title="View Profile">Profile</button>
+                <button class="nav-btn" onclick="window.location.href='leaderboard.html'" title="Leaderboard">Rankings</button>
+                <button class="nav-btn" onclick="window.location.href='achievements.html'" title="Achievements">Awards</button>
+                <button class="nav-btn" onclick="window.location.href='settings.html'" title="Settings">Settings</button>
+                <button class="nav-btn" onclick="window.location.href='tutorial.html'" title="Tutorial">Guide</button>
                 <button class="logout-btn" onclick="logoutUser()">Logout</button>
             </div>
         </div>
     `;
     document.querySelector('.header').innerHTML = headerHTML;
+}
+
+function toggleNavMenu() {
+    const navMenu = document.getElementById('headerNav');
+    if (navMenu) {
+        navMenu.classList.toggle('active');
+    }
 }
 
 // ============ AUTHENTICATION FUNCTIONS ============
