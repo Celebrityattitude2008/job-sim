@@ -943,24 +943,40 @@ function renderHeader() {
                 Stress <span>${gameState.stress}%</span> | 
                 Growth <span>${gameState.businessGrowth}</span>
             </div>
-            <button class="nav-menu-toggle" id="navMenuToggle" onclick="toggleNavMenu()">Menu</button>
+            <button class="nav-menu-toggle" id="navMenuToggle" onclick="toggleNavMenu()">☰</button>
             <div class="header-nav" id="headerNav">
-                <button class="nav-btn" onclick="window.location.href='profile.html'" title="View Profile">Profile</button>
-                <button class="nav-btn" onclick="window.location.href='leaderboard.html'" title="Leaderboard">Rankings</button>
-                <button class="nav-btn" onclick="window.location.href='achievements.html'" title="Achievements">Awards</button>
-                <button class="nav-btn" onclick="window.location.href='settings.html'" title="Settings">Settings</button>
-                <button class="nav-btn" onclick="window.location.href='tutorial.html'" title="Tutorial">Guide</button>
-                <button class="logout-btn" onclick="logoutUser()">Logout</button>
+                <button class="nav-btn" onclick="closeNavMenu(); window.location.href='profile.html'" title="View Profile">👤 Profile</button>
+                <button class="nav-btn" onclick="closeNavMenu(); window.location.href='leaderboard.html'" title="Leaderboard">🏆 Rankings</button>
+                <button class="nav-btn" onclick="closeNavMenu(); window.location.href='achievements.html'" title="Achievements">⭐ Awards</button>
+                <button class="nav-btn" onclick="closeNavMenu(); window.location.href='settings.html'" title="Settings">⚙️ Settings</button>
+                <button class="nav-btn" onclick="closeNavMenu(); window.location.href='tutorial.html'" title="Tutorial">📖 Guide</button>
+                <button class="logout-btn" onclick="logoutUser()">🚪 Logout</button>
             </div>
         </div>
     `;
     document.querySelector('.header').innerHTML = headerHTML;
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', function(event) {
+        const navMenu = document.getElementById('headerNav');
+        const navToggle = document.getElementById('navMenuToggle');
+        if (navMenu && navToggle && !navMenu.contains(event.target) && !navToggle.contains(event.target)) {
+            navMenu.classList.remove('active');
+        }
+    });
 }
 
 function toggleNavMenu() {
     const navMenu = document.getElementById('headerNav');
     if (navMenu) {
         navMenu.classList.toggle('active');
+    }
+}
+
+function closeNavMenu() {
+    const navMenu = document.getElementById('headerNav');
+    if (navMenu) {
+        navMenu.classList.remove('active');
     }
 }
 
