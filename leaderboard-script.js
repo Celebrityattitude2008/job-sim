@@ -17,6 +17,8 @@ window.addEventListener('load', () => {
 
 // ============ STATE ============
 let currentField = 'all';
+let autoRefreshInterval = null;
+const REFRESH_INTERVAL = 30000; // 30 seconds
 
 // ============ PAGE INITIALIZATION ============
 document.addEventListener('DOMContentLoaded', async () => {
@@ -26,6 +28,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     await loadLeaderboard();
     setupEventListeners();
+    startAutoRefresh();
 });
 
 // ============ THEME APPLICATION ============
@@ -154,6 +157,27 @@ function displayUserRank() {
     }
 }
 
+// ============ AUTO-REFRESH LEADERBOARD ============
+function startAutoRefresh() {
+    // Auto-refresh every 30 seconds
+    autoRefreshInterval = setInterval(async () => {
+        console.log('Auto-refreshing leaderboard...');
+        await loadLeaderboard();
+    }, REFRESH_INTERVAL);
+}
+
+function stopAutoRefresh() {
+    if (autoRefreshInterval) {
+        clearInterval(autoRefreshInterval);
+        autoRefreshInterval = null;
+    }
+}
+
+function restartAutoRefresh() {
+    stopAutoRefresh();
+    startAutoRefresh();
+}
+
 // ============ EVENT LISTENERS ============
 function setupEventListeners() {
     document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -167,10 +191,14 @@ function setupEventListeners() {
             // Update current field and reload
             currentField = e.target.dataset.field;
             await loadLeaderboard();
+            
+            // Restart auto-refresh with new filter
+            restartAutoRefresh();
         });
     });
 
     document.getElementById('logoutBtn').addEventListener('click', () => {
+        stopAutoRefresh();
         localStorage.clear();
         window.location.href = 'landing.html';
     });
