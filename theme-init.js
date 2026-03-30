@@ -28,8 +28,12 @@ function initializePageTheme() {
     }
 }
 
-// Initialize theme immediately before any content renders
-initializePageTheme();
+// Initialize theme when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializePageTheme);
+} else {
+    initializePageTheme();
+}
 
 // Listen for theme changes from other tabs/windows
 window.addEventListener('storage', (e) => {
