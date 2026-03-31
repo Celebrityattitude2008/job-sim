@@ -455,27 +455,34 @@ function renderGameplay() {
         return;
     }
 
-    const choicesHTML = scenario.choices.map((choice, index) => `
-        <div class="choice-btn" onclick="handleChoice(${index})">
-            <div class="choice-text">${choice.text}</div>
-            <div class="choice-impact">
-                <span class="${choice.impacts.money >= 0 ? 'impact-money-positive' : 'impact-money-negative'}">
-                    💰 ${choice.impacts.money > 0 ? '+' : ''}${choice.impacts.money.toLocaleString()}
-                </span>
-                <span class="${choice.impacts.stress >= 0 ? 'impact-stress-positive' : 'impact-stress-negative'}">
-                    😤 ${choice.impacts.stress > 0 ? '+' : ''}${choice.impacts.stress}
-                </span>
-                <span class="${choice.impacts.businessGrowth >= 0 ? 'impact-growth-positive' : 'impact-growth-negative'}">
-                    📈 ${choice.impacts.businessGrowth > 0 ? '+' : ''}${choice.impacts.businessGrowth}
-                </span>
-            </div>
-        </div>
-    `).join('');
+    // The ?. and || [] ensures that if choices is missing, it just shows nothing instead of crashing
+    const choicesHTML = (scenario.choices || []).map((choice, index) => {
+        // Add fallback values so if 'money' or 'stress' is missing, it shows 0 instead of crashing
+        const money = choice.impacts?.money || 0;
+        const stress = choice.impacts?.stress || 0;
+        const growth = choice.impacts?.businessGrowth || 0;
+    
+        return `
+            <div class="choice-btn" onclick="handleChoice(${index})">
+                <div class="choice-text">${choice.text}</div>
+                <div class="choice-impact">
+                    <span class="${money >= 0 ? 'impact-money-positive' : 'impact-money-negative'}">
+                        💰 ${money > 0 ? '+' : ''}${money.toLocaleString()}
+                    </span>
+                    <span class="${stress >= 0 ? 'impact-stress-positive' : 'impact-stress-negative'}">
+                        😤 ${stress > 0 ? '+' : ''}${stress}
+                    </span>
+                    <span class="${growth >= 0 ? 'impact-growth-positive' : 'impact-growth-negative'}">
+                        📈 ${growth > 0 ? '+' : ''}${growth}
+                    </span>
+                </div>
+            </div>`;
+    }).join(''); // Don't forget .join('') at the end to clean up the commas!
 
     const gameplayHTML = `
         <div class="card gameplay scenario">
-            <div class="scenario-title">${scenario.title}</div>
-            <div class="scenario-description">${scenario.description}</div>
+            <div class="scenario-title">${scenario.title || scenario.text?.substring(0, 50) || "Unknown Challenge"}</div>
+            <div class="scenario-description">${scenario.description || scenario.text || "A challenge awaits you. Make a decision."}</div>
             <div class="stat-bars">
                 ${renderStatBars()}
             </div>
@@ -499,23 +506,23 @@ function renderConsequence() {
     renderHeader();
     const scenario = currentScenario;  // Load from backend
     const choice = gameState.selectedChoice;
-    const impacts = choice.impacts;
+    const impacts = choice?.impacts || { money: 0, stress: 0, businessGrowth: 0 };  // Fallback
 
     const renderImpactSummary = () => {
         let html = '<h3>Impact of Your Decision:</h3>';
         html += '<div class="impact-item">';
         html += `<span>💰 Money:</span>`;
-        html += `<span class="${impacts.money >= 0 ? 'positive' : 'negative'}">₦${impacts.money > 0 ? '+' : ''}${impacts.money.toLocaleString()}</span>`;
+        html += `<span class="${impacts.money >= 0 ? 'positive' : 'negative'}">₦${(impacts.money || 0) > 0 ? '+' : ''}${(impacts.money || 0).toLocaleString()}</span>`;
         html += '</div>';
         
         html += '<div class="impact-item">';
         html += `<span>😤 Stress:</span>`;
-        html += `<span class="${impacts.stress >= 0 ? 'negative' : 'positive'}">${impacts.stress > 0 ? '+' : ''}${impacts.stress}</span>`;
+        html += `<span class="${(impacts.stress || 0) >= 0 ? 'negative' : 'positive'}">${(impacts.stress || 0) > 0 ? '+' : ''}${impacts.stress || 0}</span>`;
         html += '</div>';
         
         html += '<div class="impact-item">';
         html += `<span>📈 Business Growth:</span>`;
-        html += `<span class="${impacts.businessGrowth >= 0 ? 'positive' : 'negative'}">${impacts.businessGrowth > 0 ? '+' : ''}${impacts.businessGrowth}</span>`;
+        html += `<span class="${(impacts.businessGrowth || 0) >= 0 ? 'positive' : 'negative'}">${(impacts.businessGrowth || 0) > 0 ? '+' : ''}${impacts.businessGrowth || 0}</span>`;
         html += '</div>';
         
         return html;
@@ -524,13 +531,13 @@ function renderConsequence() {
     const consequenceHTML = `
         <div class="card">
             <div class="consequence-title">📋 Consequence</div>
-            <div class="consequence-choice"><strong>Your Choice:</strong> ${choice.text}</div>
+            <div class="consequence-choice"><strong>Your Choice:</strong> ${choice?.text || "Unknown choice"}</div>
             <div class="impact-summary">
                 ${renderImpactSummary()}
             </div>
             <div class="tutor-box">
                 <h3>👨‍🏫 Tutor's Comment</h3>
-                <p>${choice.tutorComment}</p>
+                <p>${choice?.tutorComment || "You made an interesting decision. Consider the long-term consequences."}</p>
             </div>
             <div style="margin-top: 1.5rem;">
                 ${renderStatBars()}
@@ -654,11 +661,14 @@ function handleChoice(choiceIndex) {
     playSound('click');
     
     const scenario = currentScenario;  // Load from backend
-    const choice = scenario.optionA || scenario.optionB;  // Handle new scenario format
-    if (choiceIndex === 0) {
-        choice = scenario.optionA;
-    } else if (choiceIndex === 1) {
-        choice = scenario.optionB;
+    
+    // Get the choice from the choices array (which is what we now send from backend)
+    const choices = scenario.choices || [];
+    const choice = choices[choiceIndex];
+    
+    if (!choice) {
+        console.error(`Choice ${choiceIndex} not found in scenario`, scenario);
+        return;  // Safety fallback
     }
 
     gameState.selectedChoice = choice;
@@ -666,8 +676,8 @@ function handleChoice(choiceIndex) {
     gameState.oldStress = gameState.stress;
     gameState.oldBusinessGrowth = gameState.businessGrowth;
 
-    // Apply difficulty multipliers to impacts (handle both old and new format)
-    const impacts = choice.impacts || { money: 0, stress: 0, growth: 0 };
+    // Apply difficulty multipliers to impacts
+    const impacts = choice.impacts || { money: 0, stress: 0, businessGrowth: 0 };
     const adjustedImpacts = applyDifficultyMultipliers(impacts);
     
     gameState.money += adjustedImpacts.money;
