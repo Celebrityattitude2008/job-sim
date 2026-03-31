@@ -246,10 +246,10 @@ async function fetchRandomScenario() {
     }
 }
 
-// ============ LEGACY SCENARIOS ARRAY (No longer used) ============
-// This placeholder prevents errors if code references old SCENARIOS anywhere
-// All scenarios are now fetched from backend via fetchRandomScenario()
-const SCENARIOS = [];  // Empty - kept for backward compatibility only
+// ============ SCENARIOS SOURCING ============
+// IMPORTANT: All scenarios are fetched from app.py ONLY
+// Do NOT define scenarios anywhere else in this file
+// Use fetchRandomScenario() to retrieve scenarios from the backend
 
 // ============ HELPER FUNCTIONS ============
 function generateNaijaComment() {
@@ -715,11 +715,9 @@ function continueToDayPlay() {
 }
 
 function closeGameplay() {
-    // Fetch next scenario from backend
-    fetchRandomScenario().then(() => {
-        gameState.phase = 'playing';
-        render();
-    });
+    getRandomScenario();
+    gameState.phase = 'playing';
+    render();
 }
 
 function restartGame() {
