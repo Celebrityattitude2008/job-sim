@@ -704,6 +704,21 @@ function handleChoice(choiceIndex) {
     render();
 }
 
+// ============ GAME OVER CHECK ============
+function checkGameOver() {
+    /**
+     * Check if game-over conditions are met.
+     * Returns a message if the game is over, null/undefined otherwise.
+     */
+    if (gameState.money <= 0) {
+        return '💔 You ran out of money! Your business collapsed. Better luck next time.';
+    }
+    if (gameState.stress >= 100) {
+        return '🤯 You\'ve burned out completely! Your body and mind gave up. Rest and try again.';
+    }
+    return null;  // Game continues
+}
+
 function continueToDayPlay() {
     const gameOverReason = checkGameOver();
     if (gameOverReason) {

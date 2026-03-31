@@ -181,7 +181,9 @@ body {
 
 /* ============ STYLISH SIDE DROPDOWN MENU ============ */
 .nav-menu-toggle {
-    display: none;
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
     background: var(--brand-color);
     color: white;
     border: none;
@@ -191,8 +193,10 @@ body {
     font-size: 1.35rem;
     transition: all var(--transition-base);
     box-shadow: var(--shadow-md);
-    position: relative;
     z-index: 1001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .nav-menu-toggle:hover {
@@ -261,13 +265,6 @@ body {
 
     .header-nav::before:hover {
         opacity: 1;
-    }
-
-    .nav-menu-toggle {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        order: 2;
     }
 
     .nav-btn {
