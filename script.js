@@ -735,14 +735,24 @@ function continueToDayPlay() {
         return;
     }
 
+    // Clear current scenario so the next day fetches fresh from backend
+    currentScenario = null;
+    
     gameState.phase = 'dailySummary';
     render();
 }
 
 function closeGameplay() {
-    getRandomScenario();
-    gameState.phase = 'playing';
-    render();
+    // Fetch next scenario from backend (app.py)
+    fetchRandomScenario().then(() => {
+        gameState.phase = 'playing';
+        render();
+    }).catch(error => {
+        console.error('Failed to load next scenario:', error);
+        // Fallback: still show something if fetch fails
+        gameState.phase = 'playing';
+        render();
+    });
 }
 
 function restartGame() {
