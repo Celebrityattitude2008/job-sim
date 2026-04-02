@@ -84,6 +84,7 @@ const characterData = {
     'Education': {
         image: 'https://humaaans.com/avatars?img=teacher_1',
         status: 'Shaping minds, changing worlds.'
+    }
 };
 
 // ============ FLOATING ICONS INITIALIZATION ============
@@ -169,37 +170,38 @@ window.addEventListener('load', () => {
 
 // ============ UTILITY FUNCTIONS ============
 function showSpinner() {
-    spinner.classList.remove('hidden');
+    if (spinner) spinner.classList.remove('hidden');
 }
 
 function hideSpinner() {
-    spinner.classList.add('hidden');
+    if (spinner) spinner.classList.add('hidden');
 }
 
 function showStatus(message, type) {
+    if (!statusMessage) return;
     statusMessage.textContent = message;
     statusMessage.className = `status-message ${type}`;
     setTimeout(() => {
-        statusMessage.classList.add('hidden');
+        if (statusMessage) statusMessage.classList.add('hidden');
     }, 4000);
 }
 
 function clearErrors() {
-    loginEmailError.textContent = '';
-    loginPasswordError.textContent = '';
-    nameError.textContent = '';
-    signupEmailError.textContent = '';
-    fieldError.textContent = '';
-    passwordError.textContent = '';
+    if (loginEmailError) loginEmailError.textContent = '';
+    if (loginPasswordError) loginPasswordError.textContent = '';
+    if (nameError) nameError.textContent = '';
+    if (signupEmailError) signupEmailError.textContent = '';
+    if (fieldError) fieldError.textContent = '';
+    if (passwordError) passwordError.textContent = '';
 }
 
 function clearFormFields() {
-    loginEmail.value = '';
-    loginPassword.value = '';
-    signupName.value = '';
-    signupEmail.value = '';
-    fieldOfStudy.value = '';
-    signupPassword.value = '';
+    if (loginEmail) loginEmail.value = '';
+    if (loginPassword) loginPassword.value = '';
+    if (signupName) signupName.value = '';
+    if (signupEmail) signupEmail.value = '';
+    if (fieldOfStudy) fieldOfStudy.value = '';
+    if (signupPassword) signupPassword.value = '';
 }
 
 function isValidEmail(email) {
@@ -247,8 +249,8 @@ async function handleSignup() {
 
     showSpinner();
     disableButtons(true);
-    const originalText = signupBtn.textContent;
-    signupBtn.textContent = 'Processing...';
+    const originalText = signupBtn ? signupBtn.textContent : 'Sign Up';
+    if (signupBtn) signupBtn.textContent = 'Processing...';
 
     try {
         const response = await fetch(`${BACKEND_URL}/signup`, {
@@ -268,7 +270,7 @@ async function handleSignup() {
         if (!response.ok) {
             hideSpinner();
             disableButtons(false);
-            signupBtn.textContent = originalText;
+            if (signupBtn) signupBtn.textContent = originalText;
 
             // Handle specific error messages
             if (data.message && data.message.includes('already')) {
@@ -297,7 +299,7 @@ async function handleSignup() {
     } catch (error) {
         hideSpinner();
         disableButtons(false);
-        signupBtn.textContent = originalText;
+        if (signupBtn) signupBtn.textContent = originalText;
         showStatus('Omo, something went wrong. Check your network or try again!', 'error');
     }
 }
@@ -332,8 +334,8 @@ async function handleLogin() {
 
     showSpinner();
     disableButtons(true);
-    const originalText = loginBtn.textContent;
-    loginBtn.textContent = 'Processing...';
+    const originalText = loginBtn ? loginBtn.textContent : 'Sign In';
+    if (loginBtn) loginBtn.textContent = 'Processing...';
 
     try {
         const response = await fetch(`${BACKEND_URL}/login`, {
@@ -351,7 +353,7 @@ async function handleLogin() {
         if (!response.ok) {
             hideSpinner();
             disableButtons(false);
-            loginBtn.textContent = originalText;
+            if (loginBtn) loginBtn.textContent = originalText;
 
             if (data.message && data.message.includes('not found')) {
                 loginEmailError.textContent = 'No account found with this email';
@@ -383,7 +385,7 @@ async function handleLogin() {
     } catch (error) {
         hideSpinner();
         disableButtons(false);
-        loginBtn.textContent = originalText;
+        if (loginBtn) loginBtn.textContent = originalText;
         showStatus('Omo, something went wrong. Check your network or try again!', 'error');
     }
 }
