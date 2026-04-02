@@ -8,6 +8,21 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="global-style.css">
     <link rel="stylesheet" href="gameend-style.css">
+    <style>
+        .icon-inline {
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            min-height: 28px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.625rem;
+            color: var(--brand-color);
+            fill: var(--brand-color);
+            stroke: var(--brand-color);
+        }
+    </style>
     <script src="config.js"></script>
     <script src="theme-init.js"></script>
 </head>
@@ -22,7 +37,7 @@
         <div class="gameend-content">
             <!-- Header -->
             <div class="gameend-header">
-                <h1 class="gameend-title">🎉 30 Days Complete!</h1>
+                <h1 class="gameend-title"><span class="icon-inline" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21 16.54 13.97 22 9.24 14.81 8.63 12 2 9.19 8.63 2 9.24 7.45 13.97 5.82 21z"/></svg></span>30 Days Complete!</h1>
                 <p class="gameend-subtitle">Your journey in the Nigerian job market ends here...</p>
             </div>
 
@@ -38,21 +53,21 @@
             <!-- Final Stats Grid -->
             <div class="stats-grid">
                 <div class="stat-card money-card">
-                    <div class="stat-icon">💰</div>
+                    <div class="stat-icon"><span class="icon-inline" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2l3 6 6 .5-4.5 4 1.5 6L12 15l-4.5 3.5 1.5-6L4.5 8.5 11 8z"/></svg></span></div>
                     <div class="stat-label">Final Money</div>
                     <div class="stat-value" id="finalMoney">₦0</div>
                     <div class="stat-change" id="moneyChange">+₦0</div>
                 </div>
 
                 <div class="stat-card stress-card">
-                    <div class="stat-icon">😰</div>
+                    <div class="stat-icon"><span class="icon-inline" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a5 5 0 0 0-5 5c0 2.76 2 5 5 7 3-2 5-4.24 5-7a5 5 0 0 0-5-5z"/><path d="M12 14v8"/></svg></span></div>
                     <div class="stat-label">Final Stress</div>
                     <div class="stat-value" id="finalStress">0%</div>
                     <div class="stat-change" id="stressChange">+0%</div>
                 </div>
 
                 <div class="stat-card growth-card">
-                    <div class="stat-icon">📈</div>
+                    <div class="stat-icon"><span class="icon-inline" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 17h18v4H3z"/><path d="M5 13l4-7 5 5 7-8" fill="none" stroke="currentColor" stroke-width="2"/></svg></span></div>
                     <div class="stat-label">Final Growth</div>
                     <div class="stat-value" id="finalGrowth">0</div>
                     <div class="stat-change" id="growthChange">+0</div>
@@ -66,15 +81,15 @@
                     <div class="rating-fill" id="ratingFill"></div>
                 </div>
                 <p class="rating-text" id="ratingText">Great effort! Keep pushing forward.</p>
-                <p class="rank-badge" id="rankBadge">🏅 Rank: Hustler</p>
+                <p class="rank-badge" id="rankBadge"><span class="icon-inline" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2l3 6 6 .5-4.5 4 1.5 6L12 15l-4.5 3.5 1.5-6L4.5 8.5 11 8z"/></svg></span> Rank: Hustler</p>
             </div>
 
             <!-- Achievements Unlocked -->
             <div class="achievements-section">
-                <h3>🏆 Achievements Unlocked</h3>
+                <h3><span class="icon-inline" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2l3 6 6 .5-4.5 4 1.5 6L12 15l-4.5 3.5 1.5-6L4.5 8.5 11 8z"/></svg></span> Achievements Unlocked</h3>
                 <div class="achievements-list" id="achievementsList">
                     <div class="achievement-item">
-                        <span class="achievement-icon">🎯</span>
+                        <span class="achievement-icon"><span class="icon-inline" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2l3 6 6 .5-4.5 4 1.5 6L12 15l-4.5 3.5 1.5-6L4.5 8.5 11 8z"/></svg></span></span>
                         <span class="achievement-name">Loading...</span>
                     </div>
                 </div>
@@ -82,7 +97,7 @@
 
             <!-- Game Tips -->
             <div class="tips-section">
-                <h3>💡 What You Learned</h3>
+                <h3><span class="icon-inline" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a5 5 0 0 0-5 5c0 2.76 2 5 5 7 3-2 5-4.24 5-7a5 5 0 0 0-5-5z"/><path d="M12 14v8"/></svg></span> What You Learned</h3>
                 <div id="gameTips" class="tips-list">
                     <div class="tip-item">
                         <span class="tip-number">1</span>
