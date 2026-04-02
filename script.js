@@ -777,6 +777,12 @@ function restartGame() {
         oldBusinessGrowth: 20,
     };
 
+    // Update localStorage so the game actually resets
+    localStorage.setItem('currentDay', 1);
+    localStorage.setItem('money', 150000);
+    localStorage.setItem('stress', 30);
+    localStorage.setItem('growth', 20);
+
     document.body.innerHTML = `
         <div class="header"></div>
         <div class="container"></div>
