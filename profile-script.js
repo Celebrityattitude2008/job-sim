@@ -1,5 +1,5 @@
 // ============ BACKEND CONFIG ============
-const BACKEND_URL = AppConfig.buildUrl('').slice(0, -1) || 'https://jobsim.pythonanywhere.com';
+const BACKEND_URL = 'https://jobsim.pythonanywhere.com';
 
 // ============ AUTHENTICATION CHECK ============
 function checkAuthProfile() {

@@ -1,3 +1,6 @@
+// ============ BACKEND CONFIGURATION ============
+const BACKEND_URL = 'https://jobsim.pythonanywhere.com';
+
 // ============ AUTHENTICATION CHECK ============
 function checkAuthentication() {
     const userId = localStorage.getItem('userId');
@@ -133,9 +136,11 @@ function saveGameProgress() {
     // 2. SEND TO SERVER (This updates the leaderboard)
     const username = localStorage.getItem('username') || gameState.firstName || 'Player';
 
-    fetch(AppConfig.buildUrl('updateStats'), {
+    fetch(`${BACKEND_URL}/updateStats`, {
         method: 'POST',
-        headers: AppConfig.fetchDefaults.headers,
+        headers: {
+            'Content-Type': 'application/json'
+        },
         body: JSON.stringify({
             username: username,
             money: gameState.money,
@@ -214,7 +219,7 @@ async function fetchRandomScenario() {
         }
         
         // Fetch all scenarios for this field from backend
-        const response = await fetch(AppConfig.buildUrlWithParams('getScenarios', { field: encodeURIComponent(field) }));
+        const response = await fetch(`${BACKEND_URL}/getScenarios?field=${encodeURIComponent(field)}`);
         
         if (!response.ok) {
             throw new Error(`API Error: ${response.status} ${response.statusText}`);
