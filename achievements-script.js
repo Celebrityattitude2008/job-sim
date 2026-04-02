@@ -1,5 +1,5 @@
 // ============ BACKEND CONFIG ============
-const BACKEND_URL = 'https://JobSim.pythonanywhere.com';
+const BACKEND_URL = AppConfig.buildUrl('').slice(0, -1) || 'https://jobsim.pythonanywhere.com';
 
 // ============ AUTHENTICATION CHECK ============
 function checkAuthAchievements() {
@@ -135,7 +135,6 @@ async function loadAchievements() {
         updateProgressCounts(displayData);
 
     } catch (error) {
-        console.error('Error loading achievements:', error);
         displayDefaultAchievements();
     }
 }

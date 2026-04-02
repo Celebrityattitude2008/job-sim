@@ -108,7 +108,7 @@ function playSound(soundType) {
                 break;
         }
     } catch (e) {
-        console.log('Sound not available');
+        // Sound not available
     }
 }
 
@@ -133,11 +133,9 @@ function saveGameProgress() {
     // 2. SEND TO SERVER (This updates the leaderboard)
     const username = localStorage.getItem('username') || gameState.firstName || 'Player';
 
-    fetch('https://jobsim.pythonanywhere.com/update-stats', {
+    fetch(AppConfig.buildUrl('updateStats'), {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
+        headers: AppConfig.fetchDefaults.headers,
         body: JSON.stringify({
             username: username,
             money: gameState.money,
@@ -146,17 +144,22 @@ function saveGameProgress() {
             days: gameState.day
         })
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        return response.json();
+    })
     .then(data => {
         if (data.success) {
-            console.log('Game synced to leaderboard!');
-        } else {
-            console.error('Leaderboard sync failed:', data.error);
+            // Game synced to leaderboard
         }
     })
-    .catch(err => console.error('Network error updating leaderboard:', err));
+    .catch(error => {
+        // Sync failed, continuing offline
+    });
 
-    console.log('Game auto-saved locally');
+    // Game auto-saved locally
 }
 
 // ============ LOAD SAVED PROGRESS ============
@@ -207,12 +210,11 @@ async function fetchRandomScenario() {
         const field = gameState.fieldOfStudy;
         
         if (!field) {
-            console.error('ERROR: No field of study set in gameState');
             return false;
         }
         
         // Fetch all scenarios for this field from backend
-        const response = await fetch(`https://jobsim.pythonanywhere.com/get-scenarios?field=${encodeURIComponent(field)}`);
+        const response = await fetch(AppConfig.buildUrlWithParams('getScenarios', { field: encodeURIComponent(field) }));
         
         if (!response.ok) {
             throw new Error(`API Error: ${response.status} ${response.statusText}`);
@@ -221,7 +223,6 @@ async function fetchRandomScenario() {
         const data = await response.json();
         
         if (!data.success || !data.scenarios || data.scenarios.length === 0) {
-            console.error('ERROR: No scenarios returned from backend', data);
             return false;
         }
         
@@ -229,18 +230,18 @@ async function fetchRandomScenario() {
         const randomIndex = Math.floor(Math.random() * data.scenarios.length);
         currentScenario = data.scenarios[randomIndex];
         
-        console.log(`Loaded scenario: Day ${currentScenario.day} - ${currentScenario.text.substring(0, 50)}...`);
+        // Scenario loaded
         return true;
         
     } catch (error) {
-        console.error('ERROR fetching scenario:', error);
-        
-        // Fallback: Create a generic scenario
+        // Backend unavailable, falling back to generic scenario
         currentScenario = {
             day: gameState.day,
             text: 'A challenge awaits you in ' + gameState.fieldOfStudy + '. What do you do?',
-            optionA: { text: 'Take it head on', impacts: { money: 10000, stress: 10 } },
-            optionB: { text: 'Take it slow', impacts: { money: 5000, stress: -5 } }
+            choices: [
+                { text: 'Take it head on', impacts: { money: 10000, stress: 10, businessGrowth: 5 } },
+                { text: 'Take it slow', impacts: { money: 5000, stress: -5, businessGrowth: 2 } }
+            ]
         };
         return true;
     }
@@ -451,7 +452,12 @@ function renderGameplay() {
 
     if (!scenario) {
         // First time - get first scenario from backend
-        fetchRandomScenario().then(() => render());
+        fetchRandomScenario().then(() => {
+            render();
+        }).catch(error => {
+            // Render with fallback scenario
+            render();
+        });
         return;
     }
 
@@ -748,7 +754,6 @@ function closeGameplay() {
         gameState.phase = 'playing';
         render();
     }).catch(error => {
-        console.error('Failed to load next scenario:', error);
         // Fallback: still show something if fetch fails
         gameState.phase = 'playing';
         render();

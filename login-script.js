@@ -1,5 +1,5 @@
 // ============ BACKEND CONFIG ============
-const BACKEND_URL = 'https://JobSim.pythonanywhere.com';
+const BACKEND_URL = AppConfig.buildUrl('').slice(0, -1) || 'https://jobsim.pythonanywhere.com';
 
 // ============ DOM ELEMENTS ============
 const loginForm = document.getElementById('login-form');
@@ -35,50 +35,49 @@ const statusBubble = document.getElementById('status-bubble');
 const characterData = {
     'Medicine': {
         image: 'https://humaaans.com/avatars?img=doctor_1',
-        status: '💊 Are you ready for 12-hour shifts?'
+        status: 'Are you ready for 12-hour shifts?'
     },
     'Engineering': {
         image: 'https://humaaans.com/avatars?img=engineer_1',
-        status: '⚙️ Let\'s build something incredible together!'
+        status: 'Let\'s build something incredible together!'
     },
     'Law': {
         image: 'https://humaaans.com/avatars?img=lawyer_1',
-        status: '⚖️ Justice requires dedication. You got this!'
+        status: 'Justice requires dedication. You got this!'
     },
     'Business': {
         image: 'https://humaaans.com/avatars?img=business_1',
-        status: '💼 Ready to disrupt the market?'
+        status: 'Ready to disrupt the market?'
     },
     'Computer Science': {
         image: 'https://humaaans.com/avatars?img=developer_1',
-        status: '💻 Code the future, one line at a time.'
+        status: 'Code the future, one line at a time.'
     },
     'Mass Communication': {
         image: 'https://humaaans.com/avatars?img=media_1',
-        status: '📺 Your story matters. Tell it well.'
+        status: 'Your story matters. Tell it well.'
     },
     'Nursing': {
         image: 'https://humaaans.com/avatars?img=nurse_1',
-        status: '🩺 Compassion + Skill = Great nursing.'
+        status: 'Compassion + Skill = Great nursing.'
     },
     'Agriculture': {
         image: 'https://humaaans.com/avatars?img=farmer_1',
-        status: '🌾 Growing food and futures.'
+        status: 'Growing food and futures.'
     },
     'Political Science': {
         image: 'https://humaaans.com/avatars?img=politician_1',
-        status: '🏛️ Lead with wisdom and integrity.'
+        status: 'Lead with wisdom and integrity.'
     },
     'Education': {
         image: 'https://humaaans.com/avatars?img=teacher_1',
-        status: '📚 Shaping minds, changing worlds.'
-    }
+        status: 'Shaping minds, changing worlds.'
 };
 
 // ============ FLOATING ICONS INITIALIZATION ============
 function initializeFloatingIcons() {
     const iconsContainer = document.getElementById('floating-icons-container');
-    const icons = ['⚖️', '🩺', '⚙️', '💻', '🌾', '💼', '📺', '🏆', '🎓', '🚀', '💡', '🎯', '📊', '🌟', '✍️', '🔧', '📱', '🎨', '📖', '🌐'];
+    const icons = [];
     
     icons.forEach((icon, index) => {
         const floatingIcon = document.createElement('div');
@@ -133,12 +132,10 @@ async function checkBackendHealth() {
         });
         
         if (!response.ok) {
-            console.warn('Backend health check failed');
             return false;
         }
         return true;
     } catch (error) {
-        console.warn('Backend unreachable:', error);
         showStatus('⚠️ Game Server is sleeping. Try again in a moment.', 'warning');
         return false;
     }
@@ -281,7 +278,6 @@ async function handleSignup() {
         hideSpinner();
         disableButtons(false);
         signupBtn.textContent = originalText;
-        console.error('Sign up error:', error);
         showStatus('Omo, something went wrong. Check your network or try again!', 'error');
     }
 }
@@ -366,7 +362,6 @@ async function handleLogin() {
         hideSpinner();
         disableButtons(false);
         loginBtn.textContent = originalText;
-        console.error('Sign in error:', error);
         showStatus('Omo, something went wrong. Check your network or try again!', 'error');
     }
 }

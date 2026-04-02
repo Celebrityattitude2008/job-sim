@@ -1,5 +1,5 @@
 // ============ BACKEND CONFIG ============
-const BACKEND_URL = 'https://JobSim.pythonanywhere.com';
+const BACKEND_URL = AppConfig.buildUrl('').slice(0, -1) || 'https://jobsim.pythonanywhere.com';
 
 // ============ AUTHENTICATION CHECK ============
 function checkAuthLeaderboard() {
@@ -74,7 +74,6 @@ async function loadLeaderboard() {
         displayUserRank();
 
     } catch (error) {
-        console.error('Error loading leaderboard:', error);
         displayNoData();
     }
 }
@@ -153,7 +152,7 @@ function displayUserRank() {
         }
 
     } catch (error) {
-        console.error('Error displaying user rank:', error);
+        // Could not display user rank
     }
 }
 
@@ -161,7 +160,6 @@ function displayUserRank() {
 function startAutoRefresh() {
     // Auto-refresh every 30 seconds
     autoRefreshInterval = setInterval(async () => {
-        console.log('Auto-refreshing leaderboard...');
         await loadLeaderboard();
     }, REFRESH_INTERVAL);
 }

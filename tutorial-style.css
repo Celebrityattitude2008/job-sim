@@ -102,8 +102,8 @@
 }
 
 .step-number {
-    width: 80px;
-    height: 80px;
+    width: 5rem;
+    height: 5rem;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     display: flex;
@@ -491,8 +491,8 @@
     }
 
     .step-number {
-        width: 60px;
-        height: 60px;
+        width: 3.75rem;
+        height: 3.75rem;
         font-size: 1.5em;
     }
 

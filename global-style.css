@@ -50,6 +50,10 @@
     --transition-slow: 300ms ease;
 }
 
+html, body {
+    overflow-x: hidden;
+}
+
 html {
     scroll-behavior: smooth;
 }
@@ -118,6 +122,11 @@ a:hover {
     color: var(--brand-color-dark);
 }
 
+a:focus {
+    outline: 2px solid var(--brand-color);
+    outline-offset: 2px;
+}
+
 /* ============ BUTTONS - UNIFIED STYLE ============ */
 
 .btn {
@@ -172,10 +181,19 @@ a:hover {
     transform: translateY(-2px);
 }
 
+.btn-secondary:active:not(:disabled) {
+    transform: translateY(0);
+}
+
 .btn-secondary:disabled {
     opacity: 0.6;
     cursor: not-allowed;
     transform: none;
+}
+
+.btn:focus {
+    outline: 2px solid var(--brand-color);
+    outline-offset: 2px;
 }
 
 .btn-ghost {

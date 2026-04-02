@@ -1,5 +1,5 @@
 // ============ BACKEND CONFIG ============
-const BACKEND_URL = 'https://JobSim.pythonanywhere.com';
+const BACKEND_URL = AppConfig.buildUrl('').slice(0, -1) || 'https://jobsim.pythonanywhere.com';
 
 // ============ AUTHENTICATION CHECK ============
 function checkAuthProfile() {
@@ -65,7 +65,6 @@ async function loadProfileData() {
         });
 
         if (!response.ok) {
-            console.warn('Could not fetch user data');
             displayLocalData(firstName, fieldOfStudy);
             return;
         }
@@ -79,20 +78,20 @@ async function loadProfileData() {
         document.getElementById('profileEmail').textContent = user.email || userEmail;
 
         // Get character avatar
-        const characterData = {
-            'Medicine': '👨‍⚕️',
-            'Engineering': '👨‍🔧',
-            'Law': '👨‍⚖️',
-            'Business': '👨‍💼',
-            'Computer Science': '👨‍💻',
-            'Mass Communication': '📺',
-            'Nursing': '👩‍⚕️',
-            'Agriculture': '👨‍🌾',
-            'Political Science': '🏛️',
-            'Education': '👨‍🏫'
+        const characterAvatars = {
+            'Medicine': 'MD',
+            'Engineering': 'ENG',
+            'Law': 'LAW',
+            'Business': 'BUS',
+            'Computer Science': 'CS',
+            'Mass Communication': 'MEDIA',
+            'Nursing': 'NURSE',
+            'Agriculture': 'AGR',
+            'Political Science': 'PS',
+            'Education': 'EDU'
         };
 
-        document.getElementById('profileAvatar').textContent = characterData[user.field] || '🎓';
+        document.getElementById('profileAvatar').textContent = characterAvatars[user.field] || 'USER';
 
         // Display current stats
         document.getElementById('currentMoney').textContent = `₦${formatNumber(user.stats.money)}`;
@@ -113,7 +112,6 @@ async function loadProfileData() {
         await loadAchievements(userId);
 
     } catch (error) {
-        console.error('Error loading profile data:', error);
         displayLocalData();
     }
 }
@@ -186,7 +184,6 @@ async function loadAchievements(userId) {
         `).join('');
 
     } catch (error) {
-        console.error('Error loading achievements:', error);
         displayDefaultAchievements();
     }
 }

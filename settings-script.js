@@ -1,5 +1,5 @@
 // ============ BACKEND CONFIG ============
-const BACKEND_URL = 'https://JobSim.pythonanywhere.com';
+const BACKEND_URL = AppConfig.buildUrl('').slice(0, -1) || 'https://jobsim.pythonanywhere.com';
 
 // ============ AUTHENTICATION CHECK ============
 function checkAuthSettings() {
@@ -90,11 +90,10 @@ async function loadSettings() {
                 localStorage.setItem('autosave', settings.autosave || 'on');
             }
         } catch (error) {
-            console.warn('Could not fetch settings from server, using local settings:', error);
+            // Server unavailable, use local settings
         }
 
     } catch (error) {
-        console.error('Error loading settings:', error);
         loadLocalSettings();
     }
 }
@@ -223,7 +222,6 @@ async function saveSettings(userId) {
         localStorage.setItem('gameDifficulty', settings.difficulty);
 
     } catch (error) {
-        console.error('Error saving settings:', error);
         alert('Error saving settings');
     }
 }
@@ -281,7 +279,6 @@ function exportUserData() {
         alert('Data exported successfully!');
 
     } catch (error) {
-        console.error('Error exporting data:', error);
         alert('Error exporting data');
     }
 }
@@ -298,7 +295,6 @@ function resetProgress() {
         window.location.href = 'index.html';
 
     } catch (error) {
-        console.error('Error resetting progress:', error);
         alert('Error resetting progress');
     }
 }

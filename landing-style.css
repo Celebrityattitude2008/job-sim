@@ -1,44 +1,6 @@
 /* ============ LANDING PAGE SPECIFIC STYLES ============ */
 /* Global styles are inherited from global-style.css */
 
-/* ============ FLOATING ICONS BACKGROUND ============ */
-.floating-icons-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 0;
-    overflow: hidden;
-}
-
-.floating-icon {
-    position: absolute;
-    font-size: 2.5rem;
-    opacity: 0.08;
-    user-select: none;
-    animation: floatDrift linear infinite;
-}
-
-@keyframes floatDrift {
-    0% {
-        transform: translateY(0) translateX(0) rotate(0deg);
-    }
-    25% {
-        transform: translateY(-20px) translateX(15px) rotate(90deg);
-    }
-    50% {
-        transform: translateY(-40px) translateX(0) rotate(180deg);
-    }
-    75% {
-        transform: translateY(-20px) translateX(-15px) rotate(270deg);
-    }
-    100% {
-        transform: translateY(0) translateX(0) rotate(360deg);
-    }
-}
-
 /* ============ HEADER ============ */
 .header {
     background-color: var(--bg-white);

@@ -69,7 +69,7 @@ function trackTutorialView() {
     const viewedTutorial = localStorage.getItem('tutorialViewed');
     if (!viewedTutorial) {
         localStorage.setItem('tutorialViewed', 'true');
-        console.log('Tutorial viewed for first time');
+        // Tutorial viewed for first time
     }
 }
 

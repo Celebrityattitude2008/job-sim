@@ -1,5 +1,5 @@
 // ============ BACKEND CONFIG ============
-const BACKEND_URL = 'https://JobSim.pythonanywhere.com';
+const BACKEND_URL = AppConfig.buildUrl('').slice(0, -1) || 'https://jobsim.pythonanywhere.com';
 
 // ============ AUTHENTICATION CHECK ============
 function checkAuthGameEnd() {
@@ -106,7 +106,7 @@ async function loadGameEndStats() {
         await completeGame(userId, finalMoney, finalStress, finalGrowth);
 
     } catch (error) {
-        console.error('Error loading game end stats:', error);
+        // Could not load game end stats
     }
 }
 
@@ -217,7 +217,7 @@ async function loadAchievements(userId) {
         `).join('');
 
     } catch (error) {
-        console.error('Error loading achievements:', error);
+        // Achievements unavailable, using defaults
     }
 }
 
@@ -236,7 +236,6 @@ async function completeGame(userId, finalMoney, finalStress, finalGrowth) {
         });
 
         if (!response.ok) {
-            console.warn('Could not mark game as complete');
             return;
         }
 
@@ -249,10 +248,8 @@ async function completeGame(userId, finalMoney, finalStress, finalGrowth) {
                 localStorage.setItem(`achievement_${ach.achievement_name}`, 'true');
             });
         }
-        
-        console.log('Game completed and achievements unlocked!');
     } catch (error) {
-        console.error('Error completing game:', error);
+        // Could not complete game sync
     }
 }
 
