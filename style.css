@@ -179,6 +179,114 @@ body {
     transform: translateY(-2px);
 }
 
+/* ============ MENU BUTTON STYLING ============ */
+.nav-menu-toggle {
+    display: none;
+    background: linear-gradient(135deg, var(--brand-color) 0%, var(--brand-color-dark) 100%);
+    color: white;
+    border: none;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    box-shadow: var(--shadow-md);
+    position: relative;
+    z-index: 999;
+}
+
+.nav-menu-toggle:hover {
+    transform: scale(1.1) rotate(90deg);
+    box-shadow: var(--shadow-lg);
+}
+
+.nav-menu-toggle:active {
+    transform: scale(0.95) rotate(90deg);
+}
+
+/* ============ TOAST NOTIFICATION ============ */
+.success-toast {
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    animation: slideInRight 0.4s ease-out, slideOutRight 0.4s ease-in 1.1s forwards;
+    z-index: 9999;
+    font-weight: 600;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+}
+
+/* ============ BOUNCING ANIMATION ============ */
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* ============ PULSE ANIMATION ============ */
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* ============ GLOW ANIMATION ============ */
+@keyframes glow {
+    0%, 100% {
+        box-shadow: var(--shadow-md);
+    }
+    50% {
+        box-shadow: var(--shadow-xl), 0 0 20px rgba(255, 107, 53, 0.4);
+    }
+}
+
+/* ============ SHAKE ANIMATION ============ */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+.choice-btn:hover {
+    animation: pulse 0.8s infinite;
+}
+
+.btn:hover {
+    animation: bounce 0.6s ease-in-out;
+}
+
 /* ============ MOBILE RESPONSIVE ============ */
 @media (max-width: 768px) {
     .header-content {
@@ -196,6 +304,14 @@ body {
         order: 3;
         text-align: left;
         font-size: 0.85rem;
+    }
+
+    .nav-menu-toggle {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        animation: pulse 2s infinite;
+        order: 2;
     }
 
     /* Side Drawer Animation */
@@ -219,6 +335,7 @@ body {
 
     .header-nav.active {
         right: 0;
+        animation: slideInRight 0.4s ease-out;
     }
 
     /* Close button for side menu */
@@ -236,6 +353,7 @@ body {
 
     .header-nav::before:hover {
         opacity: 1;
+        transform: rotate(90deg);
     }
 
     .nav-btn {
@@ -258,6 +376,7 @@ body {
         border-color: var(--brand-color);
         transform: translateX(-8px);
         box-shadow: var(--shadow-md);
+        animation: none;
     }
 
     .nav-btn:active {

@@ -46,43 +46,43 @@ const statusBubble = document.getElementById('status-bubble');
 // ============ CHARACTER DATA MAPPING ============
 const characterData = {
     'Medicine': {
-        image: 'https://humaaans.com/avatars?img=doctor_1',
+        image: 'https://www.freepik.com/free-ai-image/3d-cartoon-doctor-icon-with-stethoscope_420705452.htm#fromView=search&page=1&position=9&uuid=9864e82c-95e1-4daf-b23f-4a256de3ab00&query=Avatar+doctor',
         status: 'Are you ready for 12-hour shifts?'
     },
     'Engineering': {
-        image: 'https://humaaans.com/avatars?img=engineer_1',
+        image: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Engineering&scale=80&backgroundColor=FF6B35',
         status: 'Let\'s build something incredible together!'
     },
     'Law': {
-        image: 'https://humaaans.com/avatars?img=lawyer_1',
+        image: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Law&scale=80&backgroundColor=FF6B35',
         status: 'Justice requires dedication. You got this!'
     },
     'Business': {
-        image: 'https://humaaans.com/avatars?img=business_1',
+        image: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Business&scale=80&backgroundColor=FF6B35',
         status: 'Ready to disrupt the market?'
     },
     'Computer Science': {
-        image: 'https://humaaans.com/avatars?img=developer_1',
+        image: 'https://api.dicebear.com/7.x/avataaars/svg?seed=ComputerScience&scale=80&backgroundColor=FF6B35',
         status: 'Code the future, one line at a time.'
     },
     'Mass Communication': {
-        image: 'https://humaaans.com/avatars?img=media_1',
+        image: 'https://api.dicebear.com/7.x/avataaars/svg?seed=MassCommunication&scale=80&backgroundColor=FF6B35',
         status: 'Your story matters. Tell it well.'
     },
     'Nursing': {
-        image: 'https://humaaans.com/avatars?img=nurse_1',
+        image: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Nursing&scale=80&backgroundColor=FF6B35',
         status: 'Compassion + Skill = Great nursing.'
     },
     'Agriculture': {
-        image: 'https://humaaans.com/avatars?img=farmer_1',
+        image: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Agriculture&scale=80&backgroundColor=FF6B35',
         status: 'Growing food and futures.'
     },
     'Political Science': {
-        image: 'https://humaaans.com/avatars?img=politician_1',
+        image: 'https://api.dicebear.com/7.x/avataaars/svg?seed=PoliticalScience&scale=80&backgroundColor=FF6B35',
         status: 'Lead with wisdom and integrity.'
     },
     'Education': {
-        image: 'https://humaaans.com/avatars?img=teacher_1',
+        image: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Education&scale=80&backgroundColor=FF6B35',
         status: 'Shaping minds, changing worlds.'
     }
 };

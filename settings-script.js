@@ -286,13 +286,26 @@ function exportUserData() {
 // ============ RESET PROGRESS ============
 function resetProgress() {
     try {
+        // Clear all game progress
         localStorage.setItem('money', 150000);
         localStorage.setItem('stress', 20);
         localStorage.setItem('growth', 0);
         localStorage.setItem('currentDay', 1);
-
-        alert('Progress reset! Starting fresh...');
-        window.location.href = 'index.html';
+        
+        // Clear user settings
+        localStorage.removeItem('gameDifficulty');
+        localStorage.removeItem('autosave');
+        
+        // Show success message with toast notification
+        const successMsg = document.createElement('div');
+        successMsg.className = 'success-toast';
+        successMsg.textContent = '✓ Progress reset! Restarting game...';
+        document.body.appendChild(successMsg);
+        
+        // Redirect after showing toast
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 1500);
 
     } catch (error) {
         alert('Error resetting progress');
