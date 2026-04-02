@@ -11,6 +11,18 @@ const signupBtn = document.getElementById('signup-btn');
 const spinner = document.getElementById('loading-spinner');
 const statusMessage = document.getElementById('status-message');
 
+// Debug: Log if elements are found
+if (!loginForm || !signupForm || !toSignupBtn || !toLoginBtn || !loginBtn || !signupBtn) {
+    console.error('Missing required DOM elements:', {
+        loginForm: !!loginForm,
+        signupForm: !!signupForm,
+        toSignupBtn: !!toSignupBtn,
+        toLoginBtn: !!toLoginBtn,
+        loginBtn: !!loginBtn,
+        signupBtn: !!signupBtn
+    });
+}
+
 // Login field elements
 const loginEmail = document.getElementById('login-email');
 const loginPassword = document.getElementById('login-password');
@@ -107,21 +119,29 @@ initializeFloatingIcons();
 
 
 // ============ FORM TOGGLE ============
-toSignupBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    loginForm.classList.add('hidden');
-    signupForm.classList.remove('hidden');
-    clearErrors();
-    clearFormFields();
-});
+if (toSignupBtn) {
+    toSignupBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (loginForm && signupForm) {
+            loginForm.classList.add('hidden');
+            signupForm.classList.remove('hidden');
+            clearErrors();
+            clearFormFields();
+        }
+    });
+}
 
-toLoginBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    signupForm.classList.add('hidden');
-    loginForm.classList.remove('hidden');
-    clearErrors();
-    clearFormFields();
-});
+if (toLoginBtn) {
+    toLoginBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (loginForm && signupForm) {
+            signupForm.classList.add('hidden');
+            loginForm.classList.remove('hidden');
+            clearErrors();
+            clearFormFields();
+        }
+    });
+}
 
 // ============ BACKEND HEALTH CHECK ============
 async function checkBackendHealth() {
@@ -188,8 +208,8 @@ function isValidEmail(email) {
 }
 
 function disableButtons(disabled) {
-    loginBtn.disabled = disabled;
-    signupBtn.disabled = disabled;
+    if (loginBtn) loginBtn.disabled = disabled;
+    if (signupBtn) signupBtn.disabled = disabled;
 }
 
 // ============ SIGN UP LOGIC ============
@@ -282,10 +302,12 @@ async function handleSignup() {
     }
 }
 
-signupBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    handleSignup();
-});
+if (signupBtn) {
+    signupBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        handleSignup();
+    });
+}
 
 // ============ SIGN IN LOGIC ============
 async function handleLogin() {
@@ -366,10 +388,12 @@ async function handleLogin() {
     }
 }
 
-loginBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    handleLogin();
-});
+if (loginBtn) {
+    loginBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        handleLogin();
+    });
+}
 
 // ============ PERSIST LOGIN STATE ============
 // Check if user is already logged in (localStorage)
@@ -379,75 +403,103 @@ if (localStorage.getItem('userId')) {
 }
 
 // ============ CLEAR ERRORS ON INPUT ============
-loginEmail.addEventListener('input', () => {
-    loginEmailError.textContent = '';
-});
+if (loginEmail) {
+    loginEmail.addEventListener('input', () => {
+        if (loginEmailError) loginEmailError.textContent = '';
+    });
+}
 
-loginPassword.addEventListener('input', () => {
-    loginPasswordError.textContent = '';
-});
+if (loginPassword) {
+    loginPassword.addEventListener('input', () => {
+        if (loginPasswordError) loginPasswordError.textContent = '';
+    });
+}
 
-signupName.addEventListener('input', () => {
-    nameError.textContent = '';
-});
+if (signupName) {
+    signupName.addEventListener('input', () => {
+        if (nameError) nameError.textContent = '';
+    });
+}
 
-signupEmail.addEventListener('input', () => {
-    signupEmailError.textContent = '';
-});
+if (signupEmail) {
+    signupEmail.addEventListener('input', () => {
+        if (signupEmailError) signupEmailError.textContent = '';
+    });
+}
 
-fieldOfStudy.addEventListener('change', (e) => {
-    fieldError.textContent = '';
-    
-    // Update character when field changes
-    const selectedField = e.target.value;
-    
-    if (selectedField && characterData[selectedField]) {
-        const data = characterData[selectedField];
+if (fieldOfStudy) {
+    fieldOfStudy.addEventListener('change', (e) => {
+        if (fieldError) fieldError.textContent = '';
         
-        // Update character image
-        characterImage.src = data.image;
-        characterImage.style.animation = 'none';
+        // Update character when field changes
+        const selectedField = e.target.value;
         
-        // Trigger reflow to restart animation
-        void characterImage.offsetWidth;
-        characterImage.style.animation = '';
-        
-        // Update status bubble
-        statusBubble.innerHTML = `<p>${data.status}</p>`;
-        statusBubble.style.animation = 'none';
-        
-        // Trigger reflow to restart animation
-        void statusBubble.offsetWidth;
-        statusBubble.style.animation = 'bubblePop 0.5s ease-out';
-    }
-});
+        if (selectedField && characterData[selectedField]) {
+            const data = characterData[selectedField];
+            
+            // Update character image
+            if (characterImage) {
+                characterImage.src = data.image;
+                characterImage.style.animation = 'none';
+                
+                // Trigger reflow to restart animation
+                void characterImage.offsetWidth;
+                characterImage.style.animation = '';
+            }
+            
+            // Update status bubble
+            if (statusBubble) {
+                statusBubble.innerHTML = `<p>${data.status}</p>`;
+                statusBubble.style.animation = 'none';
+                
+                // Trigger reflow to restart animation
+                void statusBubble.offsetWidth;
+                statusBubble.style.animation = 'bubblePop 0.5s ease-out';
+            }
+        }
+    });
+}
 
-signupPassword.addEventListener('input', () => {
-    passwordError.textContent = '';
-});
+if (signupPassword) {
+    signupPassword.addEventListener('input', () => {
+        if (passwordError) passwordError.textContent = '';
+    });
+}
 
 // ============ ENTER KEY SUBMISSION ============
-loginEmail.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') loginPassword.focus();
-});
+if (loginEmail) {
+    loginEmail.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && loginPassword) loginPassword.focus();
+    });
+}
 
-loginPassword.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') loginBtn.click();
-});
+if (loginPassword) {
+    loginPassword.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && loginBtn) loginBtn.click();
+    });
+}
 
-signupName.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') signupEmail.focus();
-});
+if (signupName) {
+    signupName.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && signupEmail) signupEmail.focus();
+    });
+}
 
-signupEmail.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') fieldOfStudy.focus();
-});
+if (signupEmail) {
+    signupEmail.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && fieldOfStudy) fieldOfStudy.focus();
+    });
+}
 
-fieldOfStudy.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') signupPassword.focus();
-});
+if (fieldOfStudy) {
+    fieldOfStudy.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && signupPassword) signupPassword.focus();
+    });
+}
 
-signupPassword.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') signupBtn.click();
-});
+if (signupPassword) {
+    signupPassword.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && signupBtn) signupBtn.click();
+    });
+}
 
