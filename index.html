@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JobSim - 30 Day Business Simulation</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="global-style.css">
     <link rel="stylesheet" href="style.css">
@@ -11,6 +12,12 @@
     <script src="theme-init.js"></script>
 </head>
 <body>
+    <div class="top-nav" style="display: flex; justify-content: center; gap: 12px; background: #111; padding: 10px; position: sticky; top: 0; z-index: 100;">
+        <button onclick="triggerAgeUp()" style="background:#1e88e5;color:#fff;border:0;border-radius:8px;padding:8px 14px;cursor:pointer;">▶️ Age Up</button>
+        <button onclick="openMarket()" style="background:#ffd700;color:#000;border:0;border-radius:8px;padding:8px 14px;cursor:pointer;">💰 Market</button>
+        <button onclick="openLifestyle()" style="background:#9c27b0;color:#fff;border:0;border-radius:8px;padding:8px 14px;cursor:pointer;">🎯 Lifestyle</button>
+        <button onclick="apiCheckLifeCycle();" style="background:#4caf50;color:#fff;border:0;border-radius:8px;padding:8px 14px;cursor:pointer;">⚙️ Check Life Status</button>
+    </div>
     <div class="header"></div>
     <div class="container"></div>
     <script src="script.js"></script>

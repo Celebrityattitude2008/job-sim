@@ -556,7 +556,7 @@ body {
 .impact-stress-positive { color: #EF4444; }
 .impact-stress-negative { color: #10B981; }
 .impact-growth-positive { color: #3B82F6; }
-.impact-growth-negative { color: #9CA3AF; }
+.impact-growth-negative { color: #c0c0c0; }
 
 /* ============ CONSEQUENCE VIEW ============ */
 .consequence-title {

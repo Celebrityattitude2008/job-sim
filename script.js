@@ -132,6 +132,11 @@ function saveGameProgress() {
     localStorage.setItem('stress', gameState.stress);
     localStorage.setItem('growth', gameState.businessGrowth);
     localStorage.setItem('currentDay', gameState.day);
+    localStorage.setItem('age', gameState.age);
+    localStorage.setItem('health', gameState.health);
+    localStorage.setItem('happiness', gameState.happiness);
+    localStorage.setItem('smarts', gameState.smarts);
+    localStorage.setItem('looks', gameState.looks);
 
     // 2. SEND TO SERVER (This updates the leaderboard)
     const username = localStorage.getItem('username') || gameState.firstName || 'Player';
@@ -171,12 +176,22 @@ function loadSavedProgress() {
     const savedStress = parseInt(localStorage.getItem('stress')) || 30;
     const savedGrowth = parseInt(localStorage.getItem('growth')) || 20;
     const savedDay = parseInt(localStorage.getItem('currentDay')) || 1;
+    const savedAge = parseInt(localStorage.getItem('age')) || 0;
+    const savedHealth = parseInt(localStorage.getItem('health')) || 100;
+    const savedHappiness = parseInt(localStorage.getItem('happiness')) || 100;
+    const savedSmarts = parseInt(localStorage.getItem('smarts')) || 50;
+    const savedLooks = parseInt(localStorage.getItem('looks')) || 50;
     
     return {
         money: savedMoney,
         stress: savedStress,
         businessGrowth: savedGrowth,
-        day: savedDay
+        day: savedDay,
+        age: savedAge,
+        health: savedHealth,
+        happiness: savedHappiness,
+        smarts: savedSmarts,
+        looks: savedLooks
     };
 }
 
@@ -187,6 +202,11 @@ let gameState = {
     money: savedProgress.money,
     stress: savedProgress.stress,
     businessGrowth: savedProgress.businessGrowth,
+    age: savedProgress.age,
+    health: savedProgress.health,
+    happiness: savedProgress.happiness,
+    smarts: savedProgress.smarts,
+    looks: savedProgress.looks,
     phase: 'playing',
     scenarioIndex: -1,
     selectedChoice: null,
@@ -357,7 +377,12 @@ function renderHeader() {
             </div>
             <div class="header-stats">
                 Day <span>${gameState.day}/30</span> | 
+                Age <span>${gameState.age}</span> | 
                 Money NGN<span>${gameState.money.toLocaleString()}</span> | 
+                Health <span>${gameState.health}/100</span> | 
+                Happiness <span>${gameState.happiness}/100</span> | 
+                Smarts <span>${gameState.smarts}/100</span> | 
+                Looks <span>${gameState.looks}/100</span> | 
                 Stress <span>${gameState.stress}%</span> | 
                 Growth <span>${gameState.businessGrowth}</span>
             </div>
@@ -717,8 +742,11 @@ function handleChoice(choiceIndex) {
 function checkGameOver() {
     /**
      * Check if game-over conditions are met.
-     * Returns a message if the game is over, null/undefined otherwise.
+     * Returns a message if the game is over, null otherwise.
      */
+    if (gameState.health <= 0) {
+        return '☠️ You collapsed from poor health. Game over.';
+    }
     if (gameState.money <= 0) {
         return '💔 You ran out of money! Your business collapsed. Better luck next time.';
     }
@@ -728,7 +756,21 @@ function checkGameOver() {
     return null;  // Game continues
 }
 
+function checkRetirement() {
+    if (gameState.age >= 90) {
+        return '🎉 You reached 90+ years and retired with all your wisdom!';
+    }
+    return null;
+}
+
 function continueToDayPlay() {
+    const retirementReason = checkRetirement();
+    if (retirementReason) {
+        gameState.phase = 'finished';
+        render();
+        return;
+    }
+
     const gameOverReason = checkGameOver();
     if (gameOverReason) {
         gameState.phase = 'gameOver';
@@ -820,6 +862,392 @@ function triggerMoneyFlash() {
     if (moneyElement) {
         moneyElement.classList.add('flash-red');
         setTimeout(() => moneyElement.classList.remove('flash-red'), 1800);
+    }
+}
+
+// ============ LIFE SIMULATOR FUNCTIONS ============
+async function triggerAgeUp() {
+    const userId = localStorage.getItem('userId');
+    
+    if (!userId) {
+        alert('You must be logged in to age up!');
+        return;
+    }
+
+    // Local pre-check for life conditions
+    if (gameState.health <= 0) {
+        alert('☠️ You are already at 0 health. Please restart.');
+        gameState.phase = 'gameOver';
+        render();
+        return;
+    }
+    if (gameState.age >= 90) {
+        alert('🎉 You are now retired at age 90+. This round is complete.');
+        gameState.phase = 'finished';
+        render();
+        return;
+    }
+    
+    try {
+        const response = await fetch(AppConfig.buildUrl(AppConfig.endpoints.ageUp), {
+            method: 'POST',
+            headers: AppConfig.fetchDefaults.headers,
+            body: JSON.stringify({
+                user_id: parseInt(userId),
+                current_stats: {
+                    health: gameState.health || 100,
+                    happiness: gameState.happiness || 100,
+                    smarts: gameState.smarts || 50,
+                    looks: gameState.looks || 50,
+                    money: gameState.money || 0
+                }
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Update game state with new age and stats from response
+            gameState.age = data.new_age;
+            gameState.category = data.category;
+            
+            // Show the random event popup
+            showLifeEventPopup(data.event, data.new_age);
+            
+            playSound('success');
+        } else {
+            alert('Error: ' + data.error);
+            playSound('error');
+        }
+    } catch (error) {
+        console.error('Age-up error:', error);
+        alert('Failed to age up. Check console for details.');
+        playSound('error');
+    }
+}
+
+function showLifeEventPopup(event, age) {
+    const eventPopup = document.createElement('div');
+    eventPopup.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #1a1a1a;
+        border: 3px solid #FF6B35;
+        border-radius: 15px;
+        padding: 30px;
+        max-width: 500px;
+        z-index: 10000;
+        font-family: Arial, sans-serif;
+        box-shadow: 0 0 20px rgba(255, 107, 53, 0.3);
+    `;
+    
+    const startAge = age - 1;
+    const endAge = age;
+    
+    eventPopup.innerHTML = `
+        <div style="text-align: center; margin-bottom: 20px;">
+            <h2 style="color: #FF6B35; margin: 0 0 10px 0;">Age ${startAge} → ${endAge}</h2>
+            <p style="color: #888; margin: 5px 0;">🎂 You're now ${age} years old!</p>
+        </div>
+        
+        <div style="background: #252525; padding: 20px; border-radius: 10px; margin: 20px 0; min-height: 60px;">
+            <p style="color: #ddd; margin: 0; line-height: 1.6;">${event.text}</p>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 20px 0;">
+            <button class="life-event-btn" data-option="optionA" style="background: #2e7d32; color: white; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">
+                <small>${event.optionA.text}</small>
+            </button>
+            <button class="life-event-btn" data-option="optionB" style="background: #d32f2f; color: white; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">
+                <small>${event.optionB.text}</small>
+            </button>
+            <button class="life-event-btn" data-option="optionC" style="background: #1976d2; color: white; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">
+                <small>${event.optionC.text}</small>
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(eventPopup);
+    
+    // Add button listeners
+    eventPopup.querySelectorAll('.life-event-btn').forEach(btn => {
+        btn.addEventListener('click', async function() {
+            const option = this.getAttribute('data-option');
+            const impacts = event[option].impacts;
+            
+            // Apply impacts to player stats
+            await applyEventImpacts(impacts);
+            
+            // Remove popup
+            eventPopup.remove();
+        });
+    });
+}
+
+async function applyEventImpacts(impacts) {
+    const userId = localStorage.getItem('userId');
+    
+    try {
+        const response = await fetch(AppConfig.buildUrl(AppConfig.endpoints.ageUpApply), {
+            method: 'POST',
+            headers: AppConfig.fetchDefaults.headers,
+            body: JSON.stringify({
+                user_id: parseInt(userId),
+                impacts: impacts
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Update local game state
+            gameState.health = data.user.health;
+            gameState.happiness = data.user.happiness;
+            gameState.smarts = data.user.smarts;
+            gameState.looks = data.user.looks;
+            gameState.money = data.user.money;
+            gameState.age = data.user.age || gameState.age;
+
+            // Persist and refresh HUD
+            saveGameProgress();
+            render();
+
+            // Show impact animation
+            showImpactAnimation(impacts);
+
+            // Check for lifecycle transitions
+            apiCheckLifeCycle();
+        }
+    } catch (error) {
+        console.error('Error applying impacts:', error);
+    }
+}
+
+function showImpactAnimation(impacts) {
+    const impactDiv = document.createElement('div');
+    impactDiv.style.cssText = `
+        position: fixed;
+        top: 20%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.9);
+        border: 2px solid #FF6B35;
+        border-radius: 10px;
+        padding: 20px;
+        color: white;
+        z-index: 10001;
+        font-weight: bold;
+        text-align: center;
+    `;
+    
+    let html = '<h3 style="margin-top: 0; color: #FF6B35;">✨ Stat Changes ✨</h3>';
+    
+    if (impacts.health) html += `<p>Health: ${impacts.health > 0 ? '+' : ''}${impacts.health}</p>`;
+    if (impacts.happiness) html += `<p>Happiness: ${impacts.happiness > 0 ? '+' : ''}${impacts.happiness}</p>`;
+    if (impacts.smarts) html += `<p>Smarts: ${impacts.smarts > 0 ? '+' : ''}${impacts.smarts}</p>`;
+    if (impacts.looks) html += `<p>Looks: ${impacts.looks > 0 ? '+' : ''}${impacts.looks}</p>`;
+    if (impacts.money) html += `<p>Money: ${impacts.money > 0 ? '+' : ''}₦${impacts.money}</p>`;
+    
+    impactDiv.innerHTML = html;
+    document.body.appendChild(impactDiv);
+    
+    setTimeout(() => impactDiv.remove(), 3000);
+}
+
+async function openMarket() {
+    const userId = localStorage.getItem('userId');
+    
+    try {
+        const response = await fetch(AppConfig.buildUrl(AppConfig.endpoints.market), {
+            method: 'GET',
+            headers: AppConfig.fetchDefaults.headers
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showMarketUI(data.market, userId);
+        }
+    } catch (error) {
+        console.error('Market error:', error);
+    }
+}
+
+function showMarketUI(market, userId) {
+    const marketModal = document.createElement('div');
+    marketModal.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #1a1a1a;
+        border: 3px solid #FFD700;
+        border-radius: 15px;
+        padding: 30px;
+        max-width: 600px;
+        z-index: 10000;
+        font-family: Arial, sans-serif;
+        box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+    `;
+    
+    marketModal.innerHTML = `
+        <h2 style="color: #FFD700; text-align: center; margin-top: 0;">💰 Crypto & Real Estate Market</h2>
+        
+        <div style="background: #252525; padding: 15px; border-radius: 8px; margin: 15px 0;">
+            <h3 style="color: #FFD700; margin-top: 0;">BitCoin-NG 📈</h3>
+            <p>Price: ₦${market.crypto.price.toLocaleString()} ${market.crypto.trend}</p>
+            <input type="number" id="cryptoAmount" placeholder="Units to buy" style="width: 100%; padding: 8px; margin: 10px 0;">
+            <button onclick="buyCrypto(${market.crypto.price})" style="background: #2e7d32; color: white; width: 100%; padding: 10px; border: none; border-radius: 5px; cursor: pointer;">Buy Crypto</button>
+        </div>
+        
+        <div style="background: #252525; padding: 15px; border-radius: 8px; margin: 15px 0;">
+            <h3 style="color: #FFD700; margin-top: 0;">Lekki Property 🏠</h3>
+            <p>Price: ₦${market.realestate.price.toLocaleString()} ${market.realestate.trend}</p>
+            <input type="number" id="propertyAmount" placeholder="Units to buy" style="width: 100%; padding: 8px; margin: 10px 0;">
+            <button onclick="buyProperty(${market.realestate.price})" style="background: #d32f2f; color: white; width: 100%; padding: 10px; border: none; border-radius: 5px; cursor: pointer;">Buy Property</button>
+        </div>
+        
+        <button onclick="this.parentElement.remove()" style="background: #555; color: white; width: 100%; padding: 10px; border: none; border-radius: 5px; cursor: pointer; margin-top: 15px;">Close Market</button>
+    `;
+    
+    document.body.appendChild(marketModal);
+}
+
+async function openLifestyle() {
+    const lifestyleModal = document.createElement('div');
+    lifestyleModal.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #1a1a1a;
+        border: 3px solid #9C27B0;
+        border-radius: 15px;
+        padding: 30px;
+        max-width: 550px;
+        z-index: 10000;
+        font-family: Arial, sans-serif;
+        box-shadow: 0 0 30px rgba(156, 39, 176, 0.3);
+    `;
+    
+    lifestyleModal.innerHTML = `
+        <h2 style="color: #9C27B0; text-align: center; margin-top: 0;">🎯 Lifestyle Activities</h2>
+        
+        <div style="background: #252525; padding: 15px; border-radius: 8px; margin: 15px 0;">
+            <h3 style="color: #2e7d32;">💪 Gym</h3>
+            <p>Improve Health & Looks - ₦50,000 per hour</p>
+            <button onclick="doLifestyleActivity('gym', 1)" style="background: #2e7d32; color: white; width: 100%; padding: 10px; border: none; border-radius: 5px; cursor: pointer;">Go to Gym (1 hour)</button>
+        </div>
+        
+        <div style="background: #252525; padding: 15px; border-radius: 8px; margin: 15px 0;">
+            <h3 style="color: #1976d2;">📚 Study</h3>
+            <p>Increase Smarts - ₦30,000 per hour</p>
+            <button onclick="doLifestyleActivity('study', 1)" style="background: #1976d2; color: white; width: 100%; padding: 10px; border: none; border-radius: 5px; cursor: pointer;">Study (1 hour)</button>
+        </div>
+        
+        <div style="background: #252525; padding: 15px; border-radius: 8px; margin: 15px 0;">
+            <h3 style="color: #FF6B35;">🎉 Entertainment</h3>
+            <p>Boost Happiness - ₦100,000 per hour</p>
+            <button onclick="doLifestyleActivity('entertainment', 1)" style="background: #FF6B35; color: white; width: 100%; padding: 10px; border: none; border-radius: 5px; cursor: pointer;">Have Fun (1 hour)</button>
+        </div>
+        
+        <div style="background: #252525; padding: 15px; border-radius: 8px; margin: 15px 0;">
+            <h3 style="color: #4CAF50;">😴 Rest</h3>
+            <p>Recover Health & Happiness - FREE</p>
+            <button onclick="doLifestyleActivity('rest', 1)" style="background: #4CAF50; color: white; width: 100%; padding: 10px; border: none; border-radius: 5px; cursor: pointer;">Rest (1 hour)</button>
+        </div>
+        
+        <button onclick="this.parentElement.remove()" style="background: #555; color: white; width: 100%; padding: 10px; border: none; border-radius: 5px; cursor: pointer; margin-top: 15px;">Close</button>
+    `;
+    
+    document.body.appendChild(lifestyleModal);
+}
+
+async function doLifestyleActivity(activity, duration) {
+    const userId = localStorage.getItem('userId');
+    
+    try {
+        const response = await fetch(AppConfig.buildUrl(AppConfig.endpoints.lifestyle), {
+            method: 'POST',
+            headers: AppConfig.fetchDefaults.headers,
+            body: JSON.stringify({
+                user_id: parseInt(userId),
+                activity: activity,
+                duration: duration
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Update game state
+            gameState.health = data.user.health;
+            gameState.happiness = data.user.happiness;
+            gameState.smarts = data.user.smarts;
+            gameState.looks = data.user.looks;
+            gameState.money = data.user.money;
+            gameState.age = data.user.age || gameState.age;
+            
+            // Persist stats
+            saveGameProgress();
+            render();
+            
+            alert(`✅ ${data.description}\n💰 Cost: ₦${data.cost.toLocaleString()}`);
+            
+            // Close lifestyle modal
+            document.querySelector('[style*="9C27B0"]')?.remove();
+        } else {
+            alert('Error: ' + data.error);
+        }
+    } catch (error) {
+        console.error('Lifestyle error:', error);
+    }
+}
+
+async function apiCheckLifeCycle() {
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+        alert('Please log in first.');
+        return;
+    }
+
+    try {
+        const response = await fetch(AppConfig.buildUrl('/lifecycle-status') + `?user_id=${encodeURIComponent(userId)}`, {
+            method: 'GET',
+            headers: AppConfig.fetchDefaults.headers
+        });
+        const data = await response.json();
+
+        if (!data.success) {
+            alert('Lifecycle check failed: ' + data.error);
+            return;
+        }
+
+        if (data.status === 'alive') {
+            alert('🟢 Alive and well. Keep going!');
+            return;
+        }
+
+        if (data.status === 'dead') {
+            alert('☠️ Dead (health <= 0). Please restart.');
+            gameState.phase = 'gameOver';
+            render();
+            return;
+        }
+
+        if (data.status === 'retired') {
+            alert('🎉 Retirement reached (age >= 90)!');
+            gameState.phase = 'finished';
+            render();
+            return;
+        }
+
+        alert('Unknown lifecycle status: ' + data.status);
+    } catch (error) {
+        console.error('Lifecycle check error:', error);
+        alert('Failed to check lifecycle. See console.');
     }
 }
 

@@ -249,7 +249,7 @@ body {
 }
 
 .form-group input::placeholder {
-    color: #9CA3AF;
+    color: #c0c0c0;
 }
 
 .form-group input:focus,

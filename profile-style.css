@@ -405,7 +405,7 @@ body.dark-mode table {
 }
 
 body.dark-mode .stats-label {
-    color: #a0a0a0;
+    color: #d0d0d0;
 }
 
 body.dark-mode th {
@@ -422,5 +422,5 @@ body.dark-mode .profile-info h1 {
 }
 
 body.dark-mode .profile-subtitle {
-    color: #a0a0a0;
+    color: #d0d0d0;
 }
