@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobSim - Lifestyle</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="global-style.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="config.js"></script>
+    <script src="theme-init.js"></script>
+    <script src="script.js"></script>
+</head>
+<body>
+    <div class="top-nav" style="display: flex; justify-content: space-between; align-items:center; padding: 10px; background: #111; color: #fff;">
+        <div>
+            <a href="index.html" style="color:#fff;text-decoration:none; margin-right: 12px;">← Home</a>
+            <span style="font-weight:bold;">Lifestyle</span>
+        </div>
+        <div>
+            <a href="market.html" style="color:#fff;text-decoration:none; margin-right: 12px;">Market</a>
+            <button onclick="triggerAgeUp()" style="background:#1e88e5;color:#fff;border:none;border-radius:8px;padding:6px 12px;cursor:pointer;">Age Up</button>
+        </div>
+    </div>
+
+    <div class="container" style="padding: 1.2rem;">
+        <div class="card" style="text-align:center;">
+            <h2>Lifestyle Hub</h2>
+            <p>Choose activities to invest in health, happiness, smarts, and looks.</p>
+        </div>
+
+        <div class="card" style="margin-top:1rem; display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px;">
+            <button class="btn btn-primary" onclick="doLifestyleActivity('gym', 1);">Gym (1h)</button>
+            <button class="btn btn-primary" onclick="doLifestyleActivity('study', 1);">Study (1h)</button>
+            <button class="btn btn-primary" onclick="doLifestyleActivity('entertainment', 1);">Entertainment (1h)</button>
+            <button class="btn btn-primary" onclick="doLifestyleActivity('rest', 1);">Rest (1h)</button>
+        </div>
+
+        <div id="lifestyle-status" style="margin-top:1rem;" class="card"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const statusDiv = document.getElementById('lifestyle-status');
+            const userId = localStorage.getItem('userId');
+            if (!userId) {
+                statusDiv.innerHTML = '<p>Please log in to access lifestyle actions.</p>';
+                return;
+            }
+            statusDiv.innerHTML = '<p>Ready to improve your life stats.</p>';
+        });
+    </script>
+</body>
+</html>

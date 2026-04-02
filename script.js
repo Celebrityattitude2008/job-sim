@@ -476,20 +476,28 @@ function renderStatBars() {
 
 function renderGameplay() {
     renderHeader();
-    const scenario = currentScenario;  // Load from backend
 
-    if (!scenario) {
-        // First time - get first scenario from backend
-        fetchRandomScenario().then(() => {
-            render();
-        }).catch(error => {
-            // Render with fallback scenario
-            render();
-        });
-        return;
-    }
+    const homeHTML = `
+        <div class="card" style="text-align:center; padding: 2rem;">
+            <h2>🎉 Welcome to Life Simulator</h2>
+            <p>Progress by using the blue 'Age Up' button in top bar.</p>
+            <p>Scenarios will appear as popups only when you age up — not on the home dashboard.</p>
+            <p>Use Market and Lifestyle links to manage your finances and wellbeing.</p>
+            <div style="margin-top:1rem; display:flex; justify-content:center; gap:10px;">
+                <a href="market.html" style="text-decoration:none;"><button class="btn btn-primary">Go to Market</button></a>
+                <a href="lifestyle.html" style="text-decoration:none;"><button class="btn btn-secondary">Go to Lifestyle</button></a>
+            </div>
+        </div>
+    `;
 
-    // The ?. and || [] ensures that if choices is missing, it just shows nothing instead of crashing
+    document.querySelector('.container').innerHTML = homeHTML;
+}
+
+// Keep existing scenario-based functions usable if needed by fallback or external pages
+function renderScenarioLayout() {
+    const scenario = currentScenario;
+    if (!scenario) return;
+
     const choicesHTML = (scenario.choices || []).map((choice, index) => {
         // Add fallback values so if 'money' or 'stress' is missing, it shows 0 instead of crashing
         const money = choice.impacts?.money || 0;
@@ -1058,20 +1066,104 @@ function showImpactAnimation(impacts) {
 
 async function openMarket() {
     const userId = localStorage.getItem('userId');
-    
+
     try {
         const response = await fetch(AppConfig.buildUrl(AppConfig.endpoints.market), {
             method: 'GET',
             headers: AppConfig.fetchDefaults.headers
         });
-        
+
         const data = await response.json();
-        
-        if (data.success) {
-            showMarketUI(data.market, userId);
+
+        if (!data.success) {
+            throw new Error(data.error || 'Market fetch failed');
         }
+
+        if (document.getElementById('market-details')) {
+            renderMarketPage(data.market);
+            return;
+        }
+
+        showMarketUI(data.market, userId);
     } catch (error) {
         console.error('Market error:', error);
+    }
+}
+
+function renderMarketPage(market) {
+    const container = document.getElementById('market-details');
+    if (!container) return;
+
+    const assets = [
+        { name: 'BTC', label: 'Bitcoin', price: market.crypto.price, trend: market.crypto.trend, type: 'crypto' },
+        { name: 'ETH', label: 'Ethereum', price: Math.floor(market.crypto.price * 0.1), trend: market.crypto.trend, type: 'crypto' },
+        { name: 'MKR', label: 'Maker', price: Math.floor(market.crypto.price * 0.02), trend: market.crypto.trend, type: 'crypto' },
+        { name: 'BNB', label: 'Binance Coin', price: Math.floor(market.crypto.price * 0.05), trend: market.crypto.trend, type: 'crypto' },
+        { name: 'Real Estate', label: 'Lekki Property', price: market.realestate.price, trend: market.realestate.trend, type: 'realestate' }
+    ];
+
+    let html = '<div class="card" style="padding:16px;">';
+    html += '<h3>Live Market Prices</h3>';
+    html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;">';
+
+    assets.forEach(asset => {
+        html += `
+            <div style="background:#252525;padding:14px;border-radius:10px;border:1px solid #333;">
+                <div style="font-weight:700;font-size:0.95rem;">${asset.name} - ${asset.label}</div>
+                <div style="margin-top:6px;color:#ccc;">Price: ₦${asset.price.toLocaleString()}</div>
+                <div style="margin-top:2px;color:#a0a0a0;">Trend: ${asset.trend}</div>
+                <div style="margin-top:10px;display:flex;gap:6px;">
+                    <input id="assetAmount-${asset.name}" type="number" min="1" placeholder="Qty" style="flex:1;padding:6px;border-radius:6px;border:1px solid #444;background:#0f0f0f;color:#fff;" />
+                    <button onclick="buyAsset('${asset.type}', '${asset.name}', ${asset.price})" style="background:#1e88e5;color:#fff;border:none;border-radius:6px;padding:6px 8px;cursor:pointer;">Buy</button>
+                </div>
+            </div>
+        `;
+    });
+
+    html += '</div>';
+    html += '</div>';
+
+    container.innerHTML = html;
+}
+
+async function buyAsset(assetType, assetName, assetPrice) {
+    const amountInput = document.getElementById(`assetAmount-${assetName}`);
+    const amount = parseInt(amountInput?.value || '0', 10);
+    if (!amount || amount <= 0) {
+        alert('Please enter a positive quantity.');
+        return;
+    }
+
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+        alert('Please log in first.');
+        return;
+    }
+
+    try {
+        const response = await fetch(AppConfig.buildUrl(AppConfig.endpoints.market), {
+            method: 'POST',
+            headers: AppConfig.fetchDefaults.headers,
+            body: JSON.stringify({ user_id: parseInt(userId), action: 'buy', asset_type: assetType, amount })
+        });
+
+        const data = await response.json();
+        if (!data.success) {
+            alert('Purchase failed: ' + (data.error || 'Unknown error'));
+            return;
+        }
+
+        gameState.money = data.user.money;
+        saveGameProgress();
+        render();
+
+        alert(`Purchased ${amount} ${assetName} for ₦${(assetPrice * amount).toLocaleString()}`);
+
+        // Update market view with fresh data
+        openMarket();
+    } catch (error) {
+        console.error('buyAsset error', error);
+        alert('Error purchasing asset, check console.');
     }
 }
 
@@ -1085,35 +1177,46 @@ function showMarketUI(market, userId) {
         background: #1a1a1a;
         border: 3px solid #FFD700;
         border-radius: 15px;
-        padding: 30px;
-        max-width: 600px;
+        padding: 24px;
+        max-width: 640px;
         z-index: 10000;
         font-family: Arial, sans-serif;
         box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
     `;
-    
+
     marketModal.innerHTML = `
-        <h2 style="color: #FFD700; text-align: center; margin-top: 0;">💰 Crypto & Real Estate Market</h2>
-        
-        <div style="background: #252525; padding: 15px; border-radius: 8px; margin: 15px 0;">
-            <h3 style="color: #FFD700; margin-top: 0;">BitCoin-NG 📈</h3>
-            <p>Price: ₦${market.crypto.price.toLocaleString()} ${market.crypto.trend}</p>
-            <input type="number" id="cryptoAmount" placeholder="Units to buy" style="width: 100%; padding: 8px; margin: 10px 0;">
-            <button onclick="buyCrypto(${market.crypto.price})" style="background: #2e7d32; color: white; width: 100%; padding: 10px; border: none; border-radius: 5px; cursor: pointer;">Buy Crypto</button>
-        </div>
-        
-        <div style="background: #252525; padding: 15px; border-radius: 8px; margin: 15px 0;">
-            <h3 style="color: #FFD700; margin-top: 0;">Lekki Property 🏠</h3>
-            <p>Price: ₦${market.realestate.price.toLocaleString()} ${market.realestate.trend}</p>
-            <input type="number" id="propertyAmount" placeholder="Units to buy" style="width: 100%; padding: 8px; margin: 10px 0;">
-            <button onclick="buyProperty(${market.realestate.price})" style="background: #d32f2f; color: white; width: 100%; padding: 10px; border: none; border-radius: 5px; cursor: pointer;">Buy Property</button>
-        </div>
-        
-        <button onclick="this.parentElement.remove()" style="background: #555; color: white; width: 100%; padding: 10px; border: none; border-radius: 5px; cursor: pointer; margin-top: 15px;">Close Market</button>
+        <h2 style="color:#ffd700;text-align:center;margin-top:0;">Market</h2>
+        <p style="color:#ddd;text-align:center;margin:6px 0 14px;">Use this popup for quick market trades.</p>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">` +
+            Object.entries({
+                BTC: { label: 'Bitcoin', price: market.crypto.price, trend: market.crypto.trend },
+                ETH: { label: 'Ethereum', price: Math.floor(market.crypto.price * 0.1), trend: market.crypto.trend },
+                MKR: { label: 'Maker', price: Math.floor(market.crypto.price * 0.02), trend: market.crypto.trend },
+                BNB: { label: 'Binance', price: Math.floor(market.crypto.price * 0.05), trend: market.crypto.trend },
+                RE: { label: 'Real Estate', price: market.realestate.price, trend: market.realestate.trend }
+            }).map(([code, asset]) => `
+                <div style="background:#252525;border:1px solid #333;border-radius:10px;padding:12px;">
+                    <div style="font-weight:700;">${code} - ${asset.label}</div>
+                    <div style="margin-top:6px;color:#ccc;">₦${asset.price.toLocaleString()}</div>
+                    <div style="color:#aab;">${asset.trend}</div>
+                    <div style="margin-top:8px;display:flex;gap:8px;">
+                        <input id="amount-${code}" type="number" min="1" placeholder="Qty" style="flex:1;padding:5px;border-radius:6px;background:#111;border:1px solid #555;color:#fff;" />
+                        <button onclick="buyAsset('${code === 'RE' ? 'realestate': 'crypto'}', '${code}', ${asset.price})" style="background:#1e88e5;color:#fff;border:none;border-radius:6px;padding:5px 8px;cursor:pointer;">Buy</button>
+                    </div>
+                </div>
+            `).join('') +
+        `</div>
+        <button id="market-close-btn" style="margin-top:16px;background:#555;color:#fff;border:none;border-radius:8px;padding:8px 12px;cursor:pointer;">Close</button>
     `;
-    
+
     document.body.appendChild(marketModal);
+
+    const marketModalCloser = document.getElementById('market-close-btn');
+    if (marketModalCloser) {
+        marketModalCloser.addEventListener('click', () => marketModal.remove());
+    }
 }
+
 
 async function openLifestyle() {
     const lifestyleModal = document.createElement('div');
@@ -1133,36 +1236,41 @@ async function openLifestyle() {
     `;
     
     lifestyleModal.innerHTML = `
-        <h2 style="color: #9C27B0; text-align: center; margin-top: 0;">🎯 Lifestyle Activities</h2>
-        
-        <div style="background: #252525; padding: 15px; border-radius: 8px; margin: 15px 0;">
-            <h3 style="color: #2e7d32;">💪 Gym</h3>
-            <p>Improve Health & Looks - ₦50,000 per hour</p>
-            <button onclick="doLifestyleActivity('gym', 1)" style="background: #2e7d32; color: white; width: 100%; padding: 10px; border: none; border-radius: 5px; cursor: pointer;">Go to Gym (1 hour)</button>
+        <h2 style="color:#9c27b0;text-align:center;margin-top:0;">Lifestyle Activities</h2>
+
+        <div style="background:#252525;padding:15px;border-radius:8px;margin:15px 0;">
+            <h3 style="color:#2e7d32;">Gym</h3>
+            <p>Improve Health & Looks — ₦50,000 per hour</p>
+            <button onclick="doLifestyleActivity('gym', 1)" style="background:#2e7d32;color:white;width:100%;padding:10px;border:none;border-radius:5px;cursor:pointer;">Go to Gym (1 hour)</button>
         </div>
-        
-        <div style="background: #252525; padding: 15px; border-radius: 8px; margin: 15px 0;">
-            <h3 style="color: #1976d2;">📚 Study</h3>
-            <p>Increase Smarts - ₦30,000 per hour</p>
-            <button onclick="doLifestyleActivity('study', 1)" style="background: #1976d2; color: white; width: 100%; padding: 10px; border: none; border-radius: 5px; cursor: pointer;">Study (1 hour)</button>
+
+        <div style="background:#252525;padding:15px;border-radius:8px;margin:15px 0;">
+            <h3 style="color:#1976d2;">Study</h3>
+            <p>Increase Smarts — ₦30,000 per hour</p>
+            <button onclick="doLifestyleActivity('study', 1)" style="background:#1976d2;color:white;width:100%;padding:10px;border:none;border-radius:5px;cursor:pointer;">Study (1 hour)</button>
         </div>
-        
-        <div style="background: #252525; padding: 15px; border-radius: 8px; margin: 15px 0;">
-            <h3 style="color: #FF6B35;">🎉 Entertainment</h3>
-            <p>Boost Happiness - ₦100,000 per hour</p>
-            <button onclick="doLifestyleActivity('entertainment', 1)" style="background: #FF6B35; color: white; width: 100%; padding: 10px; border: none; border-radius: 5px; cursor: pointer;">Have Fun (1 hour)</button>
+
+        <div style="background:#252525;padding:15px;border-radius:8px;margin:15px 0;">
+            <h3 style="color:#ff6b35;">Entertainment</h3>
+            <p>Boost Happiness — ₦100,000 per hour</p>
+            <button onclick="doLifestyleActivity('entertainment', 1)" style="background:#ff6b35;color:white;width:100%;padding:10px;border:none;border-radius:5px;cursor:pointer;">Entertainment (1 hour)</button>
         </div>
-        
-        <div style="background: #252525; padding: 15px; border-radius: 8px; margin: 15px 0;">
-            <h3 style="color: #4CAF50;">😴 Rest</h3>
-            <p>Recover Health & Happiness - FREE</p>
-            <button onclick="doLifestyleActivity('rest', 1)" style="background: #4CAF50; color: white; width: 100%; padding: 10px; border: none; border-radius: 5px; cursor: pointer;">Rest (1 hour)</button>
+
+        <div style="background:#252525;padding:15px;border-radius:8px;margin:15px 0;">
+            <h3 style="color:#4caf50;">Rest</h3>
+            <p>Recover Health & Happiness — Free</p>
+            <button onclick="doLifestyleActivity('rest', 1)" style="background:#4caf50;color:white;width:100%;padding:10px;border:none;border-radius:5px;cursor:pointer;">Rest (1 hour)</button>
         </div>
-        
-        <button onclick="this.parentElement.remove()" style="background: #555; color: white; width: 100%; padding: 10px; border: none; border-radius: 5px; cursor: pointer; margin-top: 15px;">Close</button>
+
+        <button id="lifestyle-close-btn" style="background:#555;color:white;width:100%;padding:10px;border:none;border-radius:5px;cursor:pointer;margin-top:15px;">Close</button>
     `;
     
     document.body.appendChild(lifestyleModal);
+
+    const lifestyleCloseBtn = document.getElementById('lifestyle-close-btn');
+    if (lifestyleCloseBtn) {
+        lifestyleCloseBtn.addEventListener('click', () => lifestyleModal.remove());
+    }
 }
 
 async function doLifestyleActivity(activity, duration) {

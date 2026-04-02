@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobSim - Market</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="global-style.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="config.js"></script>
+    <script src="theme-init.js"></script>
+    <script src="script.js"></script>
+</head>
+<body>
+    <div class="top-nav" style="display: flex; justify-content: space-between; align-items:center; padding: 10px; background: #111; color: #fff;">
+        <div>
+            <a href="index.html" style="color:#fff;text-decoration:none; margin-right: 12px;">← Home</a>
+            <span style="font-weight:bold;">Crypto & Real Estate Market</span>
+        </div>
+        <div>
+            <a href="lifestyle.html" style="color:#fff;text-decoration:none; margin-right: 12px;">Lifestyle</a>
+            <button onclick="triggerAgeUp()" style="background:#1e88e5;color:#fff;border:none;border-radius:8px;padding:6px 12px;cursor:pointer;">Age Up</button>
+        </div>
+    </div>
+    <div class="container" style="padding: 1.2rem;">
+        <div class="card" style="text-align:center;">
+            <h2>Market Center</h2>
+            <p>Click button to load current random prices; buy directly from this page.</p>
+            <button onclick="openMarket();" class="btn btn-primary" style="margin: 10px 0;">Load Market</button>
+        </div>
+        <div id="market-details" style="margin-top: 1rem;"></div>
+    </div>
+</body>
+</html>
