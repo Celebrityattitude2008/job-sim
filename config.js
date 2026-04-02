@@ -32,7 +32,13 @@ const AppConfig = {
         achievements: '/achievements',
         unlockAchievement: '/unlock-achievement',
         settings: '/settings',
-        completeGame: '/complete-game'
+        completeGame: '/complete-game',
+        // Life Simulator endpoints
+        ageUp: '/age-up',
+        ageUpApply: '/age-up/apply',
+        getRandomEvent: '/get-random-event',
+        market: '/market',
+        lifestyle: '/lifestyle'
     },
     
     // API request configuration
