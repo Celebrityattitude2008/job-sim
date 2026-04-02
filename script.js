@@ -127,41 +127,55 @@ function initializeAutosave() {
 }
 
 function saveGameProgress() {
+    // DEBUG: Alert to confirm function is triggered
+    alert("SAVE TRIGGERED! Current Money: $" + gameState.money + " | Day: " + gameState.day);
+    console.log("[SAVE] saveGameProgress() called");
+    console.log("[SAVE] Game State:", gameState);
+    
     // 1. Keep the local save (good for backup)
     localStorage.setItem('money', gameState.money);
     localStorage.setItem('stress', gameState.stress);
     localStorage.setItem('growth', gameState.businessGrowth);
     localStorage.setItem('currentDay', gameState.day);
+    console.log("[SAVE] Local storage updated");
 
     // 2. SEND TO SERVER (This updates the leaderboard)
     const username = localStorage.getItem('username') || gameState.firstName || 'Player';
+    console.log("[SAVE] Username for server:", username);
+    console.log("[SAVE] Backend URL:", BACKEND_URL);
 
-    fetch(`${BACKEND_URL}/updateStats`, {
+    const payloadData = {
+        username: username,
+        money: gameState.money,
+        growth: gameState.businessGrowth,
+        stress: gameState.stress,
+        days: gameState.day
+    };
+    console.log("[SAVE] Sending payload:", payloadData);
+
+    fetch(`${BACKEND_URL}/update-stats`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-            username: username,
-            money: gameState.money,
-            growth: gameState.businessGrowth,
-            stress: gameState.stress,
-            days: gameState.day
-        })
+        body: JSON.stringify(payloadData)
     })
     .then(response => {
+        console.log("[SAVE] Server responded with status:", response.status, response.statusText);
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
         return response.json();
     })
     .then(data => {
+        console.log("[SAVE] SUCCESS! Server response:", data);
         if (data.success) {
-            // Game synced to leaderboard
+            console.log("[SAVE] ✓ Game synced to leaderboard");
         }
     })
     .catch(error => {
-        // Sync failed, continuing offline
+        console.error("[SAVE] ✗ CRITICAL ERROR:", error);
+        alert("ERROR SAVING: " + error.message);
     });
 
     // Game auto-saved locally
@@ -219,7 +233,7 @@ async function fetchRandomScenario() {
         }
         
         // Fetch all scenarios for this field from backend
-        const response = await fetch(`${BACKEND_URL}/getScenarios?field=${encodeURIComponent(field)}`);
+        const response = await fetch(`${BACKEND_URL}/get-scenarios?field=${encodeURIComponent(field)}`);
         
         if (!response.ok) {
             throw new Error(`API Error: ${response.status} ${response.statusText}`);
