@@ -127,22 +127,14 @@ function initializeAutosave() {
 }
 
 function saveGameProgress() {
-    // DEBUG: Alert to confirm function is triggered
-    alert("SAVE TRIGGERED! Current Money: $" + gameState.money + " | Day: " + gameState.day);
-    console.log("[SAVE] saveGameProgress() called");
-    console.log("[SAVE] Game State:", gameState);
-    
     // 1. Keep the local save (good for backup)
     localStorage.setItem('money', gameState.money);
     localStorage.setItem('stress', gameState.stress);
     localStorage.setItem('growth', gameState.businessGrowth);
     localStorage.setItem('currentDay', gameState.day);
-    console.log("[SAVE] Local storage updated");
 
     // 2. SEND TO SERVER (This updates the leaderboard)
     const username = localStorage.getItem('username') || gameState.firstName || 'Player';
-    console.log("[SAVE] Username for server:", username);
-    console.log("[SAVE] Backend URL:", BACKEND_URL);
 
     const payloadData = {
         username: username,
@@ -151,7 +143,6 @@ function saveGameProgress() {
         stress: gameState.stress,
         days: gameState.day
     };
-    console.log("[SAVE] Sending payload:", payloadData);
 
     fetch(`${BACKEND_URL}/update-stats`, {
         method: 'POST',
@@ -161,24 +152,17 @@ function saveGameProgress() {
         body: JSON.stringify(payloadData)
     })
     .then(response => {
-        console.log("[SAVE] Server responded with status:", response.status, response.statusText);
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
         return response.json();
     })
     .then(data => {
-        console.log("[SAVE] SUCCESS! Server response:", data);
-        if (data.success) {
-            console.log("[SAVE] ✓ Game synced to leaderboard");
-        }
+        // Silently synced to leaderboard
     })
     .catch(error => {
-        console.error("[SAVE] ✗ CRITICAL ERROR:", error);
-        alert("ERROR SAVING: " + error.message);
+        // Silently handle error (game continues offline)
     });
-
-    // Game auto-saved locally
 }
 
 // ============ LOAD SAVED PROGRESS ============
