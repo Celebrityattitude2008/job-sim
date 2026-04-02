@@ -144,9 +144,12 @@ function saveGameProgress() {
     const payloadData = {
         username: username,
         money: gameState.money,
-        growth: gameState.businessGrowth,
         stress: gameState.stress,
-        days: gameState.day
+        age: gameState.age,
+        health: gameState.health,
+        happiness: gameState.happiness,
+        smarts: gameState.smarts,
+        looks: gameState.looks
     };
 
     fetch(`${BACKEND_URL}/update-stats`, {
@@ -199,10 +202,10 @@ function loadSavedProgress() {
 const savedProgress = loadSavedProgress();
 let gameState = {
     day: savedProgress.day,
+    age: savedProgress.age,
     money: savedProgress.money,
     stress: savedProgress.stress,
     businessGrowth: savedProgress.businessGrowth,
-    age: savedProgress.age,
     health: savedProgress.health,
     happiness: savedProgress.happiness,
     smarts: savedProgress.smarts,
@@ -919,6 +922,9 @@ async function triggerAgeUp() {
             gameState.age = data.new_age;
             gameState.category = data.category;
             
+            // Save the updated age immediately
+            saveGameProgress();
+            
             // Show the random event popup
             showLifeEventPopup(data.event, data.new_age);
             
@@ -1366,10 +1372,47 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Initialize autosave system
     initializeAutosave();
-    
-    document.body.innerHTML = `
-        <div class="header"></div>
-        <div class="container"></div>
-    `;
-    render();
+
+    const filename = window.location.pathname.split('/').pop().toLowerCase();
+
+    // Only render home app view on index routes
+    if (filename === '' || filename === 'index.html' || filename === '/') {
+        document.body.innerHTML = `
+            <div class="header"></div>
+            <div class="container"></div>
+        `;
+        render();
+        return;
+    }
+
+    // For market and lifestyle pages, preserve existing layout and use their local containers
+    if (filename === 'market.html' || filename === 'market') {
+        if (typeof renderHeader === 'function' && document.querySelector('.header')) {
+            renderHeader();
+        }
+
+        const userId = localStorage.getItem('userId');
+        if (!userId) {
+            const marketDetails = document.getElementById('market-details');
+            if (marketDetails) marketDetails.innerHTML = '<p>Please log in to access market.</p>';
+        } else {
+            openMarket();
+        }
+        return;
+    }
+
+    if (filename === 'lifestyle.html' || filename === 'lifestyle') {
+        if (typeof renderHeader === 'function' && document.querySelector('.header')) {
+            renderHeader();
+        }
+
+        const lifestyleStatus = document.getElementById('lifestyle-status');
+        if (lifestyleStatus) {
+            lifestyleStatus.innerHTML = '<p>Ready to improve your life stats.</p>';
+        }
+        return;
+    }
+
+    // Fallback for unknown pages: keep current body and log
+    console.log('[INFO] page not explicitly managed by main app:', filename);
 });
